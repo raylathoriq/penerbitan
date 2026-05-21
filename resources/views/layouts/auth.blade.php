@@ -6,8 +6,8 @@
     <title>@yield('title', 'Login - LPPM UPNVJ')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="@yield('bg_class', 'bg-slate-100') text-slate-800 font-sans antialiased min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-    <div class="@yield('card_class', 'bg-white border-slate-100') max-w-md w-full space-y-8 p-8 rounded-xl shadow-lg border">
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg border border-slate-100">
         <div>
             <h2 class="mt-2 text-center text-3xl font-extrabold text-green-800">
                 LPPM UPNVJ Press
