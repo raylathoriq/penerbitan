@@ -15,12 +15,20 @@ Route::get('/persyaratan', function () { return view('public.requirements'); });
 Route::get('/buku/{id}', function () { return view('public.detail-book'); });
 
 // Auth
-Route::get('/auth/login', function () { return view('auth.login'); });
-Route::get('/auth/register', function () { return view('auth.register'); });
+Route::get('/auth/login', [\App\Http\Controllers\AuthController::class, 'showLogin'])->name('login');
+Route::post('/auth/login', [\App\Http\Controllers\AuthController::class, 'login']);
+Route::get('/auth/register', [\App\Http\Controllers\AuthController::class, 'showRegister'])->name('register');
+Route::post('/auth/register', [\App\Http\Controllers\AuthController::class, 'register']);
+Route::post('/auth/logout', [\App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
 
 // Admin
 Route::prefix('admin')->group(function () {
-    Route::get('/login', function () { return view('auth.admin-login'); });
+    Route::get('/login', [\App\Http\Controllers\AuthController::class, 'showAdminLogin'])->name('admin.login');
+    Route::post('/login', [\App\Http\Controllers\AuthController::class, 'adminLogin']);
+});
+
+Route::prefix('admin')->middleware('auth')->group(function () {
+    Route::get('/', function () { return redirect('/admin/dashboard'); });
     Route::get('/dashboard', function () { return view('admin.dashboard'); });
     Route::get('/naskah', function () { return view('admin.naskah.index'); });
     Route::get('/naskah/{id}', function () { return view('admin.naskah.detail'); });
@@ -30,7 +38,8 @@ Route::prefix('admin')->group(function () {
 });
 
 // Author
-Route::prefix('author')->group(function () {
+Route::prefix('author')->middleware('auth')->group(function () {
+    Route::get('/', function () { return redirect('/author/dashboard'); });
     Route::get('/dashboard', function () { return view('author.dashboard'); });
     Route::get('/naskah', function () { return view('author.list-naskah'); });
     Route::get('/upload', function () { return view('author.upload'); });

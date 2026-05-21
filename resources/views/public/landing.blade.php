@@ -17,8 +17,8 @@
                         </p>
                         <div class="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
                             <div class="rounded-md shadow">
-                                <a href="/auth/login" class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-green-700 hover:bg-green-800 md:py-4 md:text-lg md:px-10">
-                                    Mulai Terbitkan
+                                <a href="{{ auth()->check() ? (auth()->user()->role === 'admin' ? '/admin/dashboard' : '/author/dashboard') : '/auth/login' }}" class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-green-700 hover:bg-green-800 md:py-4 md:text-lg md:px-10">
+                                    {{ auth()->check() ? 'Buka Dashboard' : 'Mulai Terbitkan' }}
                                 </a>
                             </div>
                             <div class="mt-3 sm:mt-0 sm:ml-3">

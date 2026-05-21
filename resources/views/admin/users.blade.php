@@ -6,7 +6,6 @@
 <x-card>
     <div class="flex justify-between items-center mb-6">
         <h2 class="text-lg font-semibold text-slate-800">Daftar Pengguna</h2>
-        <button class="bg-green-700 hover:bg-green-800 text-white px-4 py-2 rounded-md text-sm font-medium transition">Tambah User</button>
     </div>
     
     <div class="overflow-x-auto">
@@ -37,7 +36,6 @@
                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Aktif</span>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                        <a href="#" class="text-blue-600 hover:text-blue-900">Edit</a>
                         <a href="#" class="text-red-600 hover:text-red-900">Hapus</a>
                     </td>
                 </tr>
