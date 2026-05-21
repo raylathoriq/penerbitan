@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Author Dashboard')</title>
+    <link rel="icon" href="{{ asset('img/upnvj.png') }}">
     <!-- Custom font for premium feel -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -53,15 +54,21 @@
                         <div>
                             <button @click="open = !open" type="button" class="bg-white rounded-full flex text-sm focus:outline-none ring-1 ring-slate-200 shadow-sm hover:shadow-md transition-all" id="user-menu-button">
                                 <div class="h-9 w-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-700 font-bold">
-                                    AU
+                                    {{ substr(Auth::user()->name, 0, 1) }}
                                 </div>
                             </button>
                         </div>
                         <div x-show="open" @click.away="open = false" 
                              class="origin-top-right absolute right-0 mt-2 w-48 rounded-xl shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu">
+                             <div class="px-4 py-2 text-xs text-slate-500 font-medium">{{ Auth::user()->name }}</div>
+                             <a href="/" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100">Beranda</a>
+                            <div class="border-t border-slate-100 my-1"></div>
                             <a href="/author/profil" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">Profil Saya</a>
                             <div class="border-t border-slate-100 my-1"></div>
-                            <a href="/" class="block px-4 py-2 text-sm text-rose-600 hover:bg-rose-50">Keluar</a>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-rose-600 hover:bg-rose-50">Keluar</button>
+                            </form>
                         </div>
                     </div>
                 </div>

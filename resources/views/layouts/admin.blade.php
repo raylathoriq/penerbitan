@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Admin Dashboard')</title>
+    <link rel="icon" href="{{ asset('img/upnvj.png') }}">
     <!-- Custom font for premium feel -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -60,7 +61,7 @@
                             <button @click="open = !open" type="button" class="bg-white rounded-full flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 ring-1 ring-slate-200 shadow-sm transition-all hover:shadow-md" id="user-menu-button">
                                 <span class="sr-only">Buka profil</span>
                                 <div class="h-9 w-9 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-800 font-bold">
-                                    A
+                                    {{ substr(Auth::user()->name, 0, 1) }}
                                 </div>
                             </button>
                         </div>
@@ -72,9 +73,14 @@
                              x-transition:leave-start="transform opacity-100 scale-100" 
                              x-transition:leave-end="transform opacity-0 scale-95" 
                              class="origin-top-right absolute right-0 mt-2 w-48 rounded-xl shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu">
+                            <div class="px-4 py-2 text-xs text-slate-500 font-medium">{{ Auth::user()->name }}</div>
+                            <div class="border-t border-slate-100 my-1"></div>
                             <a href="/admin/profil" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors">Profil Admin</a>
                             <div class="border-t border-slate-100 my-1"></div>
-                            <a href="/admin/login" class="block px-4 py-2 text-sm text-rose-600 hover:bg-rose-50 transition-colors">Keluar</a>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-rose-600 hover:bg-rose-50 transition-colors">Keluar</button>
+                            </form>
                         </div>
                     </div>
                 </div>

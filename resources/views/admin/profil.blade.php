@@ -15,7 +15,7 @@
                 <!-- Avatar Section -->
                 <div class="flex items-center gap-6 pb-6 border-b border-slate-100">
                     <div class="h-20 w-20 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 font-bold text-xl overflow-hidden ring-4 ring-white shadow-sm">
-                        AD
+                        {{ substr(Auth::user()->name, 0, 2) }}
                     </div>
                     <div>
                         <x-button type="secondary" typeHtml="button" class="!px-3 !py-1.5 text-xs">Ubah Foto</x-button>
@@ -25,12 +25,12 @@
 
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1.5">Nama Lengkap</label>
-                    <input type="text" value="Admin Redaksi UPNVJ" class="block w-full border border-slate-200 rounded-lg text-sm py-2.5 px-3 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm transition-all" required>
+                    <input type="text" value="{{ Auth::user()->name }}" class="block w-full border border-slate-200 rounded-lg text-sm py-2.5 px-3 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm transition-all" required>
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1.5">Alamat Email</label>
-                    <input type="email" value="admin.press@upnvj.ac.id" class="block w-full border border-slate-200 rounded-lg text-sm py-2.5 px-3 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm transition-all bg-slate-50" readonly>
+                    <input type="email" value="{{ Auth::user()->email }}" class="block w-full border border-slate-200 rounded-lg text-sm py-2.5 px-3 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm transition-all bg-slate-50" readonly>
                     <p class="text-xs text-slate-500 mt-1.5">Email terikat dengan domain institusi dan tidak dapat diubah sembarangan.</p>
                 </div>
 
