@@ -19,7 +19,7 @@
         <div class="flex items-center">
             <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 text-green-600 focus:ring-green-500 border-slate-300 rounded">
             <label for="remember-me" class="ml-2 block text-sm text-slate-900">
-                Ingatkan saya
+                Ingat saya
             </label>
         </div>
 
@@ -50,7 +50,7 @@
 
         <div class="mt-6">
             <button type="button" onclick="window.location.href='/author/dashboard';" class="w-full flex justify-center py-2 px-4 border border-slate-300 rounded-md shadow-sm bg-white text-sm font-medium text-slate-700 hover:bg-slate-50">
-                Author (Eksternal)
+                Author (Simulasi)
             </button>
         </div>
     </div>

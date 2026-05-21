@@ -74,7 +74,7 @@
                              class="origin-top-right absolute right-0 mt-2 w-48 rounded-xl shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu">
                             <a href="/admin/profil" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors">Profil Admin</a>
                             <div class="border-t border-slate-100 my-1"></div>
-                            <a href="/" class="block px-4 py-2 text-sm text-rose-600 hover:bg-rose-50 transition-colors">Keluar</a>
+                            <a href="/admin/login" class="block px-4 py-2 text-sm text-rose-600 hover:bg-rose-50 transition-colors">Keluar</a>
                         </div>
                     </div>
                 </div>

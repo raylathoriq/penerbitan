@@ -16,10 +16,34 @@
                     <input type="text" class="block w-full rounded-lg border-slate-200 py-2.5 px-3 focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm border shadow-sm transition-all" required>
                 </div>
 
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Daftar Penulis</label>
-                    <input type="text" placeholder="Contoh: Dr. Budi, Prof. Andi" class="block w-full rounded-lg border-slate-200 py-2.5 px-3 focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm border shadow-sm transition-all" required>
-                    <p class="text-xs text-slate-500 mt-1.5">Gunakan koma untuk memisahkan antar penulis.</p>
+                <div x-data="{ coAuthors: [] }" class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm">
+                    <div class="mb-5">
+                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Penulis Utama (Anda)</label>
+                        <input type="text" value="Dr. Budi Santoso (Author Login)" class="block w-full rounded-lg border-slate-200 bg-slate-50 text-slate-500 py-2.5 px-3 sm:text-sm border shadow-sm" readonly>
+                    </div>
+
+                    <div class="mb-3 flex items-center justify-between">
+                        <label class="block text-sm font-medium text-slate-700">Penulis Pendamping (Co-Authors)</label>
+                        <button type="button" @click="coAuthors.push({ name: '' })" class="text-sm text-emerald-600 hover:text-emerald-700 font-medium flex items-center hover:bg-emerald-50 px-2 py-1 rounded transition-colors">
+                            <svg class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                            Tambah Penulis
+                        </button>
+                    </div>
+
+                    <div class="space-y-3">
+                        <template x-for="(author, index) in coAuthors" :key="index">
+                            <div class="flex items-center gap-3">
+                                <input type="text" x-model="author.name" placeholder="Nama Lengkap Co-Author beserta Gelar" class="block w-full rounded-lg border-slate-200 py-2.5 px-3 focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm border shadow-sm transition-all" required>
+                                <button type="button" @click="coAuthors.splice(index, 1)" class="p-2 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors border border-transparent hover:border-rose-100 flex-shrink-0" title="Hapus Penulis">
+                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                </button>
+                            </div>
+                        </template>
+                        
+                        <div x-show="coAuthors.length === 0" class="text-sm text-slate-500 bg-slate-50 p-4 rounded-lg border border-slate-100 border-dashed text-center">
+                            Belum ada penulis pendamping. Klik "Tambah Penulis" jika naskah ini ditulis oleh lebih dari 1 orang.
+                        </div>
+                    </div>
                 </div>
 
                 <div>

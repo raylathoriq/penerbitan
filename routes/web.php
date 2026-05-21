@@ -20,6 +20,7 @@ Route::get('/auth/register', function () { return view('auth.register'); });
 
 // Admin
 Route::prefix('admin')->group(function () {
+    Route::get('/login', function () { return view('auth.admin-login'); });
     Route::get('/dashboard', function () { return view('admin.dashboard'); });
     Route::get('/naskah', function () { return view('admin.naskah.index'); });
     Route::get('/naskah/{id}', function () { return view('admin.naskah.detail'); });
