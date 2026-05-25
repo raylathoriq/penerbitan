@@ -12,7 +12,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () { return view('public.landing'); });
 Route::get('/katalog', function () { return view('public.catalog'); });
 Route::get('/persyaratan', function () { return view('public.requirements'); });
-Route::get('/buku/{id}', function () { return view('public.detail-book'); });
+Route::get('/buku/{id}', function ($id) {
+    $book = \App\Models\Book::findOrFail($id);
+    return view('public.detail-book', compact('book'));
+});
 
 // Auth
 Route::get('/auth/login', [\App\Http\Controllers\AuthController::class, 'showLogin'])->name('login');
