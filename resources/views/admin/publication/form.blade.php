@@ -18,10 +18,39 @@
                     </select>
                 </div>
                 
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Nomor ISBN</label>
-                    <input type="text" placeholder="Contoh: 978-602-1234-xx-x" class="block w-full border border-slate-200 rounded-lg text-sm py-2.5 px-3 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Nomor ISBN</label>
+                        <input type="text" placeholder="Contoh: 978-602-1234-xx-x" class="block w-full border border-slate-200 rounded-lg text-sm py-2.5 px-3 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Tanggal Terbit Pustaka</label>
+                        <input type="date" class="block w-full border border-slate-200 rounded-lg text-sm py-2.5 px-3 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm">
+                    </div>
                 </div>
+
+                <div x-data="{ metadata: [{ key: 'citation_pages', value: '' }] }" class="pt-4 border-t border-slate-100">
+                    <div class="flex justify-between items-center mb-3">
+                        <label class="block text-sm font-medium text-slate-700">Metadata Buku (Scholar)</label>
+                        <button type="button" @click="metadata.push({ key: '', value: '' })" class="text-xs text-emerald-600 hover:text-emerald-700 font-medium">
+                            + Tambah Meta
+                        </button>
+                    </div>
+                    <div class="space-y-3">
+                        <template x-for="(meta, index) in metadata" :key="index">
+                            <div class="flex gap-3 items-center">
+                                <input type="text" x-model="meta.key" placeholder="Meta Key (cnth: harga)" class="w-1/3 border border-slate-200 rounded-lg text-sm py-2 px-3 focus:ring-emerald-500 focus:border-emerald-500">
+                                <input type="text" x-model="meta.value" placeholder="Nilai Meta..." class="flex-1 border border-slate-200 rounded-lg text-sm py-2 px-3 focus:ring-emerald-500 focus:border-emerald-500">
+                                <button type="button" @click="metadata.splice(index, 1)" class="text-rose-500 hover:text-rose-700 p-2">
+                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                </button>
+                            </div>
+                        </template>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-2">Data metadata tambahan ini akan dirender secara dinamis untuk tabel publication_metadata.</p>
+                </div>
+
+                <div class="pt-2">
 
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1.5">Cetak PDF (Versi Publik)</label>

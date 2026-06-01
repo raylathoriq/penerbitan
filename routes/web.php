@@ -47,3 +47,16 @@ Route::prefix('author')->middleware('auth')->group(function () {
     Route::get('/revisi/{id}', function () { return view('author.revisi'); });
     Route::get('/profil', function () { return view('author.profil'); });
 });
+
+// Reviewer
+Route::prefix('reviewer')->group(function () {
+    Route::get('/login', [\App\Http\Controllers\AuthController::class, 'showReviewerLogin'])->name('reviewer.login');
+    Route::post('/login', [\App\Http\Controllers\AuthController::class, 'reviewerLogin']);
+});
+
+Route::prefix('reviewer')->middleware('auth')->group(function () {
+    Route::get('/', function () { return redirect('/reviewer/dashboard'); });
+    Route::get('/dashboard', function () { return view('reviewer.dashboard'); });
+    Route::get('/naskah', function () { return view('reviewer.naskah.index'); });
+    Route::get('/naskah/{id}', function () { return view('reviewer.naskah.detail'); });
+});

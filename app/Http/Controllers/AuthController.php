@@ -19,6 +19,11 @@ class AuthController extends Controller
         return view('auth.admin-login');
     }
 
+    public function showReviewerLogin()
+    {
+        return view('auth.reviewer-login');
+    }
+
     public function showRegister()
     {
         return view('auth.register');
@@ -97,6 +102,35 @@ class AuthController extends Controller
             }
 
             return redirect()->intended('/admin/dashboard');
+        }
+
+        return back()->withErrors([
+            'email' => 'Email atau Password salah.',
+        ])->onlyInput('email');
+    }
+
+    public function reviewerLogin(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+        ]);
+
+        $remember = $request->has('remember-me');
+
+        if (Auth::attempt($credentials, $remember)) {
+            $request->session()->regenerate();
+
+            if (Auth::user()->role !== 'reviewer') {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+                return back()->withErrors([
+                    'email' => 'Akses ditolak: Anda bukan Reviewer.',
+                ])->onlyInput('email');
+            }
+
+            return redirect()->intended('/reviewer/dashboard');
         }
 
         return back()->withErrors([
