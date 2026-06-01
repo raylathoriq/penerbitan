@@ -18,7 +18,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('afiliasi')->nullable();
-            $table->enum('role', ['admin', 'author'])->default('author');
+            $table->enum('role', ['admin', 'author','reviewer'])->default('author');
             $table->rememberToken();
             $table->timestamps();
         });

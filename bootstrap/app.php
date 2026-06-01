@@ -15,6 +15,9 @@ return Application::configure(basePath: dirname(__DIR__))
             if ($request->is('admin') || $request->is('admin/*')) {
                 return route('admin.login');
             }
+            if ($request->is('reviewer') || $request->is('reviewer/*')) {
+                return route('reviewer.login');
+            }
             return route('login');
         });
     })

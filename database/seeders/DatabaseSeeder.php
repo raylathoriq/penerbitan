@@ -15,11 +15,30 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Penulis / Author Default
+        User::create([
+            'name' => 'Penulis UPNVJ',
+            'email' => 'author@upnvj.ac.id',
+            'password' => bcrypt('password'),
+            'role' => 'author',
+            'afiliasi' => 'FIK UPNVJ',
+        ]);
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // Admin / Redaksi Default
+        User::create([
+            'name' => 'Admin',
+            'email' => 'admin@upnvj.ac.id',
+            'password' => bcrypt('password'),
+            'role' => 'admin',
+        ]);
+
+        // Reviewer / Dosen Pakar Default
+        User::create([
+            'name' => 'Reviewer',
+            'email' => 'reviewer@upnvj.ac.id',
+            'password' => bcrypt('password'),
+            'role' => 'reviewer',
+            'afiliasi' => 'Ahli Komputer UPNVJ',
         ]);
     }
 }
