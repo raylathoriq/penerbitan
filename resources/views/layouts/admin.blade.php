@@ -20,7 +20,7 @@
     <div class="hidden md:flex md:flex-shrink-0">
         <div class="flex flex-col w-64 border-r border-slate-800 bg-slate-900 text-slate-300 shadow-xl z-20">
             <div class="h-16 flex items-center px-6 border-b border-slate-800">
-                <span class="text-xl font-bold tracking-tight text-white">Admin LPPM <span class="text-emerald-500">.</span></span>
+                <span class="text-xl font-bold tracking-tight text-white">Admin LPPM </span>
             </div>
             <div class="flex-1 flex flex-col overflow-y-auto py-6">
                 <nav class="flex-1 px-4 space-y-1.5">

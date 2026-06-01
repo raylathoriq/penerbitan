@@ -20,7 +20,7 @@
     <div class="hidden md:flex md:flex-shrink-0">
         <div class="flex flex-col w-64 border-r border-slate-200 text-slate-700 bg-white shadow-sm z-20">
             <div class="h-16 flex items-center px-6 border-b border-slate-100">
-                <span class="text-xl font-bold tracking-tight text-slate-900">Author Panel <span class="text-emerald-600">.</span></span>
+                <span class="text-xl font-bold tracking-tight text-slate-900">Dashboard</span>
             </div>
             <div class="flex-1 flex flex-col overflow-y-auto p-4">
                 <nav class="flex-1 space-y-1.5">

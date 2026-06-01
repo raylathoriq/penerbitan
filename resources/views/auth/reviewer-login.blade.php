@@ -28,7 +28,7 @@
         <div class="flex items-center">
             <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-slate-300 rounded">
             <label for="remember-me" class="ml-2 block text-sm text-slate-900">
-                Ingat sesi ini
+                Ingatkan saya
             </label>
         </div>
     </div>
@@ -39,8 +39,8 @@
         </button>
     </div>
     
-    <div class="mt-4 text-center">
-        <a href="/auth/login" class="text-sm font-medium text-slate-500 hover:text-slate-700">Dosen / Penulis? <span class="text-emerald-600">Login disini</span></a>
+    <div class="mt-4 text-center text-sm text-slate-500 font-bold">
+        LPPM Press
     </div>
 </form>
 @endsection
