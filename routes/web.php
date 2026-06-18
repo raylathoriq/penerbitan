@@ -1,5 +1,5 @@
 <?php
-
+use App\Http\Controllers\CategoryController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -52,6 +52,43 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/naskah', function () { return view('admin.naskah.index'); });
     Route::get('/naskah/{id}', function () { return view('admin.naskah.detail'); });
     Route::get('/publication', function () { return view('admin.publication.form'); });
+    Route::get('/kategori', [CategoryController::class, 'index'])->name('admin.kategori.index');
+    Route::post('/kategori', [CategoryController::class, 'store'])->name('kategori.store');
+    Route::put('/kategori/{category}', [CategoryController::class, 'update'])->name('kategori.update');
+    Route::delete('/kategori/{category}', [CategoryController::class, 'destroy'])->name('kategori.destroy');
+    Route::get('/paket', function () {
+        $packages = collect([
+            (object)[
+                'id' => 1,
+                'name' => 'Paket Dasar (E-Book)',
+                'price' => 0,
+                'description' => 'Fasilitas review naskah standar, pembuatan e-book e-ISBN, tanpa pencetakan fisik.',
+                'status' => 'Aktif'
+            ],
+            (object)[
+                'id' => 2,
+                'name' => 'Paket Reguler',
+                'price' => 1500000,
+                'description' => 'Review prioritas, e-ISBN + e-book, layouting & cover standar, serta 5 eksemplar buku cetak.',
+                'status' => 'Aktif'
+            ],
+            (object)[
+                'id' => 3,
+                'name' => 'Paket Premium LPPM',
+                'price' => 3500000,
+                'description' => 'Review kilat, e-book, pendaftaran Hak Cipta (HAKI), cover premium custom, serta 20 eksemplar buku cetak ber-ISBN.',
+                'status' => 'Aktif'
+            ],
+            (object)[
+                'id' => 4,
+                'name' => 'Promo Dies Natalis UPNVJ',
+                'price' => 800000,
+                'description' => 'Paket bundling khusus ulang tahun universitas, hanya berlaku bagi dosen internal.',
+                'status' => 'Nonaktif'
+            ]
+        ]);
+        return view('admin.paket.index', compact('packages'));
+    });
     Route::get('/users', function () { return view('admin.users'); });
     Route::get('/profil', function () { return view('admin.profil'); });
 });
@@ -66,6 +103,8 @@ Route::prefix('author')->middleware('auth')->group(function () {
     Route::get('/revisi/{id}', function () { return view('author.revisi'); });
     Route::get('/profil', function () { return view('author.profil'); });
 });
+
+
 
 // Reviewer
 Route::prefix('reviewer')->group(function () {
