@@ -39,7 +39,7 @@
                                 </button>
                             </div>
                             <div x-show="open" @click.away="open = false" style="display: none;" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
-                                <a href="{{ Auth::user()->role === 'admin' ? '/admin/dashboard' : '/author/dashboard' }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100">Dashboard</a>
+                                <a href="{{ match(Auth::user()->role) { 'admin' => '/admin/dashboard', 'editor' => '/editor/dashboard', 'reviewer' => '/reviewer/dashboard', default => '/author/dashboard' } }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100">Dashboard</a>
                                 
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
