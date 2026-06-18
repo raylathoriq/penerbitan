@@ -27,6 +27,25 @@ Route::prefix('admin')->group(function () {
     Route::post('/login', [\App\Http\Controllers\AuthController::class, 'adminLogin']);
 });
 
+// Editor
+Route::prefix('editor')->group(function () {
+    Route::get('/', function () {
+        if (auth()->check() && auth()->user()->role === 'editor') {
+            return redirect('/editor/dashboard');
+        }
+
+        return redirect('/editor/login');
+    });
+    Route::get('/login', [\App\Http\Controllers\AuthController::class, 'showEditorLogin'])->name('editor.login');
+    Route::post('/login', [\App\Http\Controllers\AuthController::class, 'editorLogin']);
+});
+
+Route::prefix('editor')->middleware('auth')->group(function () {
+    Route::get('/dashboard', function () { return view('editor.dashboard'); });
+    Route::get('/naskah', function () { return view('editor.naskah.index'); });
+    Route::get('/naskah/{id}', function () { return view('editor.naskah.detail'); });
+});
+
 Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/', function () { return redirect('/admin/dashboard'); });
     Route::get('/dashboard', function () { return view('admin.dashboard'); });

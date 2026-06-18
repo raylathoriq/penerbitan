@@ -24,6 +24,11 @@ class AuthController extends Controller
         return view('auth.reviewer-login');
     }
 
+    public function showEditorLogin()
+    {
+        return view('auth.editor-login');
+    }
+
     public function showRegister()
     {
         return view('auth.register');
@@ -63,12 +68,12 @@ class AuthController extends Controller
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
 
-            if (Auth::user()->role === 'admin') {
+            if (Auth::user()->role !== 'author') {
                 Auth::logout();
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
                 return back()->withErrors([
-                    'email' => 'Gagal: Akun Admin tidak bisa masuk lewat portal Author. Silakan gunakan portal Admin.',
+                    'email' => 'Gagal: Akun ini tidak bisa masuk lewat portal Author. Silakan gunakan portal sesuai peran Anda.',
                 ])->onlyInput('email');
             }
 
@@ -131,6 +136,35 @@ class AuthController extends Controller
             }
 
             return redirect()->intended('/reviewer/dashboard');
+        }
+
+        return back()->withErrors([
+            'email' => 'Email atau Password salah.',
+        ])->onlyInput('email');
+    }
+
+    public function editorLogin(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+        ]);
+
+        $remember = $request->has('remember-me');
+
+        if (Auth::attempt($credentials, $remember)) {
+            $request->session()->regenerate();
+
+            if (Auth::user()->role !== 'editor') {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+                return back()->withErrors([
+                    'email' => 'Akses ditolak: Anda bukan Editor.',
+                ])->onlyInput('email');
+            }
+
+            return redirect()->intended('/editor/dashboard');
         }
 
         return back()->withErrors([
