@@ -39,15 +39,11 @@
                     @forelse($packages as $index => $package)
                         <tr class="hover:bg-slate-50/50 transition-colors">
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">{{ $index + 1 }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-slate-900">{{ $package->name }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-slate-900">{{ $package->nama_paket }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-700">
-                                @if((int)$package->price === 0)
-                                    Gratis / Subsidi
-                                @else
-                                    Rp {{ number_format($package->price, 0, ',', '.') }}
-                                @endif
+                                {{$package->harga}}
                             </td>
-                            <td class="px-6 py-4 text-sm text-slate-500 max-w-xs truncate" title="{{ $package->description }}">{{ $package->description }}</td>
+                            <td class="px-6 py-4 text-sm text-slate-500 max-w-xs truncate" title="{{ $package->deskripsi }}">{{ $package->deskripsi }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-center text-sm">
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border {{ $package->status === 'Aktif' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-50 text-slate-600 border-slate-200' }}">
                                     {{ $package->status }}
@@ -70,7 +66,7 @@
                         <!-- 2. MODAL EDIT UNTUK PAKET INI -->
                         <!-- ========================================== -->
                         <x-modal name="modal-paket-edit-{{ $package->id }}" title="Edit Paket Penerbitan">
-                            <form action="" method="POST">
+                            <form action="{{route('paket.update', $package)}}" method="POST">
                                 @csrf
                                 @method('PUT')
 
@@ -80,8 +76,8 @@
                                         <input 
                                             type="text" 
                                             id="name_{{ $package->id }}" 
-                                            name="name" 
-                                            value="{{ old('name', $package->name) }}" 
+                                            name="nama_paket" 
+                                            value="{{ old('nama_paket', $package->nama_paket) }}" 
                                             required 
                                             class="block w-full border border-slate-200 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm"
                                         >
@@ -97,8 +93,8 @@
                                                 <input 
                                                     type="number" 
                                                     id="price_{{ $package->id }}" 
-                                                    name="price" 
-                                                    value="{{ old('price', $package->price) }}" 
+                                                    name="harga" 
+                                                    value="{{ old('harga', $package->harga) }}" 
                                                     required 
                                                     min="0"
                                                     class="block w-full border border-slate-200 rounded-lg py-2 pl-9 pr-3 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm"
@@ -123,10 +119,10 @@
                                         <label for="description_{{ $package->id }}" class="block text-sm font-medium text-slate-700 mb-1">Keterangan & Fasilitas</label>
                                         <textarea 
                                             id="description_{{ $package->id }}" 
-                                            name="description" 
+                                            name="deskripsi" 
                                             rows="3" 
                                             class="block w-full border border-slate-200 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm"
-                                        >{{ old('description', $package->description) }}</textarea>
+                                        >{{ old('deskripsi', $package->deskripsi) }}</textarea>
                                     </div>
                                 </div>
 
@@ -141,7 +137,7 @@
                         <!-- 3. MODAL HAPUS UNTUK PAKET INI -->
                         <!-- ========================================== -->
                         <x-modal name="modal-paket-delete-{{ $package->id }}" title="Hapus Paket Penerbitan">
-                            <form action="" method="POST">
+                            <form action="{{route('paket.destroy', $package)}}" method="POST">
                                 @csrf
                                 @method('DELETE')
 
@@ -175,7 +171,7 @@
     <!-- 4. MODAL TAMBAH PAKET (DI LUAR LOOPING) -->
     <!-- ========================================== -->
     <x-modal name="modal-paket-tambah" title="Tambah Paket Baru">
-        <form action="" method="POST">
+        <form action="{{route('paket.store')}}" method="POST">
             @csrf
             <div class="space-y-4">
                 <div>
@@ -183,16 +179,16 @@
                     <input 
                         type="text" 
                         id="name" 
-                        name="name" 
+                        name="nama_paket" 
                         required 
                         placeholder="Contoh: Paket Gold Cetak"
-                        class="block w-full border border-slate-200 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm"
+                        class="block w-full border border-slate-200 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm"
                     >
                 </div>
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label for="price" class="block text-sm font-medium text-slate-700 mb-1">Harga (Rupiah) <span class="text-rose-500">*</span></label>
+                        <label for="price" class="block text-sm font-medium text-slate-700 mb-1">Harga (Rupiah)</label>
                         <div class="relative rounded-lg shadow-sm">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <span class="text-slate-400 text-sm">Rp</span>
@@ -200,21 +196,21 @@
                             <input 
                                 type="number" 
                                 id="price" 
-                                name="price" 
+                                name="harga" 
                                 required 
                                 min="0"
                                 placeholder="0"
-                                class="block w-full border border-slate-200 rounded-lg py-2 pl-9 pr-3 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm"
+                                class="block w-full border border-slate-200 rounded-lg py-2 pl-9 pr-3 text-sm focus:outline-nonefocus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm"
                             >
                         </div>
                     </div>
                     
                     <div>
-                        <label for="status" class="block text-sm font-medium text-slate-700 mb-1">Status Keaktifan <span class="text-rose-500">*</span></label>
+                        <label for="status" class="block text-sm font-medium text-slate-700 mb-1">Status</label>
                         <select 
                             id="status" 
                             name="status" 
-                            class="block w-full border border-slate-200 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm bg-white"
+                            class="block w-full border border-slate-200 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm bg-white"
                         >
                             <option value="Aktif">Aktif</option>
                             <option value="Nonaktif">Nonaktif</option>
@@ -223,13 +219,13 @@
                 </div>
 
                 <div>
-                    <label for="description" class="block text-sm font-medium text-slate-700 mb-1">Keterangan & Fasilitas</label>
+                    <label for="description" class="block text-sm font-medium text-slate-700 mb-1">Deskripsi</label>
                     <textarea 
                         id="description" 
-                        name="description" 
+                        name="deskripsi" 
                         rows="3" 
-                        placeholder="Tulis detail fasilitas paket..."
-                        class="block w-full border border-slate-200 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm"
+                        placeholder="Tulis deskripsi paket..."
+                        class="block w-full border border-slate-200 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm"
                     ></textarea>
                 </div>
             </div>
