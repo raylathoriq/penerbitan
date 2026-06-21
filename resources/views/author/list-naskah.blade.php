@@ -32,7 +32,7 @@
                             @if ($naskah->status === 'revisi')
                                 <a href="{{ url('/author/revisi/'.$naskah->id) }}" class="text-orange-600 hover:text-orange-800 transition-colors">Kirim Revisi</a>
                             @endif
-                            <a href="{{ route('author.naskah.show', $naskah) }}" class="text-slate-500 hover:text-slate-900 transition-colors">Detail</a>
+                            <a href="{{ route('author.naskah.show', $naskah->id) }}" class="text-slate-500 hover:text-slate-900 transition-colors">Detail</a>
                         </td>
                     </tr>
                 @empty

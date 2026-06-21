@@ -58,7 +58,7 @@ class NaskahController extends Controller
             'document_size' => $documentSize,
         ]);
 
-        return redirect()->route('author.naskah.show', $naskah)
+        return redirect()->route('author.dashboard')
             ->with('success', 'Naskah berhasil diajukan.');
     }
 

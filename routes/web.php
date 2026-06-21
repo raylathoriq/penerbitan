@@ -4,6 +4,8 @@ use App\Http\Controllers\Admin\NaskahController;
 use App\Http\Controllers\Author\NaskahController as AuthorNaskahController;
 use App\Models\Naskah;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\PackageController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -31,6 +33,25 @@ Route::prefix('admin')->group(function () {
     Route::post('/login', [\App\Http\Controllers\AuthController::class, 'adminLogin']);
 });
 
+// Editor
+Route::prefix('editor')->group(function () {
+    Route::get('/', function () {
+        if (auth()->check() && auth()->user()->role === 'editor') {
+            return redirect('/editor/dashboard');
+        }
+
+        return redirect('/editor/login');
+    });
+    Route::get('/login', [\App\Http\Controllers\AuthController::class, 'showEditorLogin'])->name('editor.login');
+    Route::post('/login', [\App\Http\Controllers\AuthController::class, 'editorLogin']);
+});
+
+Route::prefix('editor')->middleware('auth')->group(function () {
+    Route::get('/dashboard', function () { return view('editor.dashboard'); });
+    Route::get('/naskah', function () { return view('editor.naskah.index'); });
+    Route::get('/naskah/{id}', function () { return view('editor.naskah.detail'); });
+});
+
 Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/', function () { return redirect('/admin/dashboard'); });
     Route::get('/dashboard', function () {
@@ -45,6 +66,16 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/naskah', [NaskahController::class, 'index']);
     Route::get('/naskah/{id}', [NaskahController::class, 'show']);
     Route::get('/publication', function () { return view('admin.publication.form'); });
+    // kategori
+    Route::get('/kategori', [CategoryController::class, 'index'])->name('admin.kategori.index');
+    Route::post('/kategori', [CategoryController::class, 'store'])->name('kategori.store');
+    Route::put('/kategori/{category}', [CategoryController::class, 'update'])->name('kategori.update');
+    Route::delete('/kategori/{category}', [CategoryController::class, 'destroy'])->name('kategori.destroy');
+    // paket
+    Route::get('/paket',[PackageController::class,'index'])->name('admin.paket.index');
+    Route::post('/paket',[PackageController::class,'store'])->name('paket.store');
+    Route::put('/paket/{package}', [PackageController::class, 'update'])->name('paket.update');
+    Route::delete('/paket/{package}', [PackageController::class, 'destroy'])->name('paket.destroy');
     Route::get('/users', function () { return view('admin.users'); });
     Route::get('/profil', function () { return view('admin.profil'); });
 });
@@ -60,7 +91,7 @@ Route::prefix('author')->middleware('auth')->group(function () {
         $recent = Naskah::where('author_id', $user->id)->orderByDesc('submitted_at')->limit(5)->get();
 
         return view('author.dashboard', compact('total', 'inReview', 'published', 'recent'));
-    });
+    })->name('author.dashboard');
     Route::get('/naskah', [AuthorNaskahController::class, 'index'])->name('author.naskah.index');
     Route::get('/upload', [AuthorNaskahController::class, 'create'])->name('author.naskah.create');
     Route::post('/naskah', [AuthorNaskahController::class, 'store'])->name('author.naskah.store');
@@ -68,6 +99,8 @@ Route::prefix('author')->middleware('auth')->group(function () {
     Route::get('/revisi/{id}', function () { return view('author.revisi'); });
     Route::get('/profil', function () { return view('author.profil'); });
 });
+
+
 
 // Reviewer
 Route::prefix('reviewer')->group(function () {

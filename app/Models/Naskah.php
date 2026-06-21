@@ -12,6 +12,8 @@ class Naskah extends Model
 {
     use HasFactory;
 
+    protected $table = 'naskah';
+
     protected function casts(): array
     {
         return [

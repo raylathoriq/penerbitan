@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('naskahs', function (Blueprint $table) {
-            if (! Schema::hasColumn('naskahs', 'document_path')) {
+        Schema::table('naskah', function (Blueprint $table) {
+            if (! Schema::hasColumn('naskah', 'document_path')) {
                 $table->string('document_path')->nullable()->after('document_name');
             }
 
-            if (! Schema::hasColumn('naskahs', 'category')) {
+            if (! Schema::hasColumn('naskah', 'category')) {
                 $table->string('category')->nullable()->after('title');
             }
         });
@@ -27,12 +27,12 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('naskahs', function (Blueprint $table) {
-            if (Schema::hasColumn('naskahs', 'document_path')) {
+        Schema::table('naskah', function (Blueprint $table) {
+            if (Schema::hasColumn('naskah', 'document_path')) {
                 $table->dropColumn('document_path');
             }
 
-            if (Schema::hasColumn('naskahs', 'category')) {
+            if (Schema::hasColumn('naskah', 'category')) {
                 $table->dropColumn('category');
             }
         });

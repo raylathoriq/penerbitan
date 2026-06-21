@@ -35,6 +35,15 @@ class DatabaseSeeder extends Seeder
             'role' => 'admin',
         ]);
 
+        // Editor / Penyunting Naskah Default
+        User::create([
+            'name' => 'Editor LPPM',
+            'email' => 'editor@upnvj.ac.id',
+            'password' => bcrypt('password'),
+            'role' => 'editor',
+            'afiliasi' => 'LPPM UPNVJ Press',
+        ]);
+
         // Reviewer / Dosen Pakar Default
         User::firstOrCreate([
             'email' => 'reviewer@upnvj.ac.id',

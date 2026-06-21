@@ -12,14 +12,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('naskahs', function (Blueprint $table) {
-            if (! Schema::hasColumn('naskahs', 'submitted_at')) {
+        Schema::table('naskah', function (Blueprint $table) {
+            if (! Schema::hasColumn('naskah', 'submitted_at')) {
                 $table->timestamp('submitted_at')->nullable()->after('created_at');
             }
         });
 
         // Set submitted_at = created_at for existing rows
-        DB::table('naskahs')
+        DB::table('naskah')
             ->whereNull('submitted_at')
             ->update(['submitted_at' => DB::raw('created_at')]);
     }
@@ -29,8 +29,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('naskahs', function (Blueprint $table) {
-            if (Schema::hasColumn('naskahs', 'submitted_at')) {
+        Schema::table('naskah', function (Blueprint $table) {
+            if (Schema::hasColumn('naskah', 'submitted_at')) {
                 $table->dropColumn('submitted_at');
             }
         });
