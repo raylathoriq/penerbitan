@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Controllers\Admin\NaskahController;
+use App\Http\Controllers\Author\NaskahController as AuthorNaskahController;
+use App\Models\Naskah;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -29,9 +33,17 @@ Route::prefix('admin')->group(function () {
 
 Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/', function () { return redirect('/admin/dashboard'); });
-    Route::get('/dashboard', function () { return view('admin.dashboard'); });
-    Route::get('/naskah', function () { return view('admin.naskah.index'); });
-    Route::get('/naskah/{id}', function () { return view('admin.naskah.detail'); });
+    Route::get('/dashboard', function () {
+        $total = Naskah::count();
+        $inReview = Naskah::where('status', 'dalam review')->count();
+        $published = Naskah::where('status', 'diterima')->count();
+        $rejected = Naskah::where('status', 'ditolak')->count();
+        $recent = Naskah::orderByDesc('submitted_at')->limit(5)->get();
+
+        return view('admin.dashboard', compact('total', 'inReview', 'published', 'rejected', 'recent'));
+    });
+    Route::get('/naskah', [NaskahController::class, 'index']);
+    Route::get('/naskah/{id}', [NaskahController::class, 'show']);
     Route::get('/publication', function () { return view('admin.publication.form'); });
     Route::get('/users', function () { return view('admin.users'); });
     Route::get('/profil', function () { return view('admin.profil'); });
@@ -40,10 +52,19 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 // Author
 Route::prefix('author')->middleware('auth')->group(function () {
     Route::get('/', function () { return redirect('/author/dashboard'); });
-    Route::get('/dashboard', function () { return view('author.dashboard'); });
-    Route::get('/naskah', function () { return view('author.list-naskah'); });
-    Route::get('/upload', function () { return view('author.upload'); });
-    Route::get('/naskah/{id}', function () { return view('author.detail-naskah'); });
+    Route::get('/dashboard', function () {
+        $user = Auth::user();
+        $total = Naskah::where('author_id', $user->id)->count();
+        $inReview = Naskah::where('author_id', $user->id)->where('status', 'dalam review')->count();
+        $published = Naskah::where('author_id', $user->id)->where('status', 'diterima')->count();
+        $recent = Naskah::where('author_id', $user->id)->orderByDesc('submitted_at')->limit(5)->get();
+
+        return view('author.dashboard', compact('total', 'inReview', 'published', 'recent'));
+    });
+    Route::get('/naskah', [AuthorNaskahController::class, 'index'])->name('author.naskah.index');
+    Route::get('/upload', [AuthorNaskahController::class, 'create'])->name('author.naskah.create');
+    Route::post('/naskah', [AuthorNaskahController::class, 'store'])->name('author.naskah.store');
+    Route::get('/naskah/{id}', [AuthorNaskahController::class, 'show'])->name('author.naskah.show');
     Route::get('/revisi/{id}', function () { return view('author.revisi'); });
     Route::get('/profil', function () { return view('author.profil'); });
 });

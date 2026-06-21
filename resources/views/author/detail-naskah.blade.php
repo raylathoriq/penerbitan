@@ -14,25 +14,31 @@
     <div class="lg:col-span-2 space-y-6">
         <x-card>
             <div class="flex justify-between items-start mb-6">
-                <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Analisis Struktur Basis Data</h2>
-                <x-badge status="Dalam Review" />
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900 tracking-tight">{{ $naskah->title }}</h2>
+                    <p class="text-slate-500 mt-1">Diajukan oleh {{ $naskah->author_name }}</p>
+                </div>
+                <x-badge status="{{ $naskah->status_label }}" />
             </div>
             
             <div class="space-y-5">
                 <div>
-                    <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Daftar Penulis</h4>
-                    <p class="text-slate-900 font-medium">Dr. Budi Santoso</p>
-                </div>
-                <div>
                     <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Abstrak</h4>
-                    <p class="text-slate-700 leading-relaxed text-sm">Buku ini membahas secara mendalam tentang arsitektur basis data relasional. Memuat panduan komprehensif mulai dari normalisasi, optimasi query, hingga strategi backup database skala enterprise.</p>
+                    <p class="text-slate-700 leading-relaxed text-sm">{{ $naskah->description }}</p>
                 </div>
                 <div>
                     <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">File Terkirim</h4>
-                    <a href="#" class="mt-2 inline-flex items-center px-4 py-2 border border-slate-200 shadow-sm rounded-lg text-sm text-slate-700 bg-white hover:bg-slate-50 hover:text-emerald-700 transition-colors">
-                        <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                        Naskah_Final_v1.pdf
-                    </a>
+                    @if ($naskah->document_path)
+                        <a href="{{ asset('storage/' . $naskah->document_path) }}" target="_blank" rel="noreferrer" class="mt-2 inline-flex items-center px-4 py-2 border border-slate-200 shadow-sm rounded-lg text-sm text-slate-700 bg-white hover:bg-slate-50 hover:text-emerald-700 transition-colors">
+                            <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            {{ $naskah->document_name }}
+                        </a>
+                        @if($naskah->document_size)
+                            <p class="text-xs text-slate-500 mt-2">{{ $naskah->document_size }}</p>
+                        @endif
+                    @else
+                        <p class="text-sm text-slate-500">Belum ada file yang terunggah.</p>
+                    @endif
                 </div>
             </div>
         </x-card>

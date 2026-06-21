@@ -27,21 +27,30 @@
                 <tr class="bg-slate-50/75">
                     <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-widest">Judul Naskah</th>
                     <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-widest">Author</th>
+                    <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-widest">Tanggal</th>
                     <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-widest">Status</th>
                     <th scope="col" class="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-widest">Aksi</th>
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-slate-50">
-                <tr class="hover:bg-slate-50/50 transition-colors">
-                    <td class="px-6 py-4 text-sm font-medium text-slate-900 w-1/3">
-                        <div class="truncate max-w-md" title="Dasar Logika Matematika">Dasar Logika Matematika</div>
-                    </td>
-                    <td class="px-6 py-4 text-sm text-slate-600">Dr. Budi</td>
-                    <td class="px-6 py-4 whitespace-nowrap"><x-badge status="Diajukan" /></td>
-                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <a href="/admin/naskah/1" class="text-emerald-600 hover:text-emerald-800 transition-colors">Review</a>
-                    </td>
-                </tr>
+                @forelse ($naskahs as $naskah)
+                    <tr class="hover:bg-slate-50/50 transition-colors">
+                        <td class="px-6 py-4 text-sm font-medium text-slate-900 w-1/3">
+                            <div class="truncate max-w-md" title="{{ $naskah->title }}">{{ $naskah->title }}</div>
+                        </td>
+                        <td class="px-6 py-4 text-sm text-slate-600">{{ $naskah->author_name }}</td>
+                        @php $admDate = $naskah->submitted_at ?? $naskah->created_at; @endphp
+                        <td class="px-6 py-4 text-sm text-slate-500">{{ $admDate ? $admDate->copy()->setTimezone('Asia/Jakarta')->locale('id')->translatedFormat('d F Y H:i') . ' WIB' : '-' }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap"><x-badge status="{{ $naskah->status_label }}" /></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <a href="{{ url('/admin/naskah/'.$naskah->id) }}" class="text-emerald-600 hover:text-emerald-800 transition-colors">Review</a>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="4" class="px-6 py-4 text-sm text-slate-500 text-center">Belum ada naskah yang terdaftar.</td>
+                    </tr>
+                @endforelse
             </tbody>
         </table>
     </div>

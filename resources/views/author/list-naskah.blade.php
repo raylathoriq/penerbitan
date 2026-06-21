@@ -22,31 +22,24 @@
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-slate-50">
-                <tr class="hover:bg-slate-50/50 transition-colors">
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">Analisis Struktur Basis Data</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">10 Mei 2026</td>
-                    <td class="px-6 py-4 whitespace-nowrap"><x-badge status="Dalam Review" /></td>
-                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-3">
-                        <a href="/author/naskah/1" class="text-slate-500 hover:text-slate-900 transition-colors">Detail</a>
-                    </td>
-                </tr>
-                <tr class="hover:bg-slate-50/50 transition-colors">
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">Kalkulus Lanjut</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">01 Mei 2026</td>
-                    <td class="px-6 py-4 whitespace-nowrap"><x-badge status="Revisi" /></td>
-                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-3">
-                        <a href="/author/revisi/2" class="text-orange-600 hover:text-orange-800 transition-colors">Kirim Revisi</a>
-                        <a href="/author/naskah/2" class="text-slate-500 hover:text-slate-900 transition-colors">Detail</a>
-                    </td>
-                </tr>
-                <tr class="hover:bg-slate-50/50 transition-colors">
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">Panduan Laravel Dasar</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">05 Apr 2026</td>
-                    <td class="px-6 py-4 whitespace-nowrap"><x-badge status="Terbit" /></td>
-                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-3">
-                        <a href="/author/naskah/3" class="text-slate-500 hover:text-slate-900 transition-colors">Detail</a>
-                    </td>
-                </tr>
+                @forelse ($naskahs as $naskah)
+                    <tr class="hover:bg-slate-50/50 transition-colors">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">{{ $naskah->title }}</td>
+                        @php $date = $naskah->submitted_at ?? $naskah->created_at; @endphp
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 mt-1">{{ $date ? $date->copy()->setTimezone('Asia/Jakarta')->locale('id')->translatedFormat('d F Y H:i') . ' WIB' : '-' }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap"><x-badge status="{{ $naskah->status_label }}" /></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-3">
+                            @if ($naskah->status === 'revisi')
+                                <a href="{{ url('/author/revisi/'.$naskah->id) }}" class="text-orange-600 hover:text-orange-800 transition-colors">Kirim Revisi</a>
+                            @endif
+                            <a href="{{ route('author.naskah.show', $naskah) }}" class="text-slate-500 hover:text-slate-900 transition-colors">Detail</a>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="4" class="px-6 py-4 text-center text-sm text-slate-500">Anda belum mengajukan naskah apa pun.</td>
+                    </tr>
+                @endforelse
             </tbody>
         </table>
     </div>
