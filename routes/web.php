@@ -1,6 +1,7 @@
 <?php
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PackageController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -63,7 +64,10 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::post('/paket',[PackageController::class,'store'])->name('paket.store');
     Route::put('/paket/{package}', [PackageController::class, 'update'])->name('paket.update');
     Route::delete('/paket/{package}', [PackageController::class, 'destroy'])->name('paket.destroy');
-    Route::get('/users', function () { return view('admin.users'); });
+    // users
+    Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
+    Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+    Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     Route::get('/profil', function () { return view('admin.profil'); });
 });
 
