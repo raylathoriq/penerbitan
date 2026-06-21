@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -15,6 +16,27 @@ class UserController extends Controller
         // Mengambil semua data pengguna untuk ditampilkan di view admin.users
         $users = User::all();
         return view('admin.users', compact('users'));
+    }
+
+    /**
+     * Store a newly created user in storage.
+     */
+    public function store(Request $request)
+    {
+        $validatedData = $request->validate([
+            'role' => 'required|in:author,reviewer,editor,admin',
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email',
+            'password' => 'required|string|min:8',
+            'afiliasi' => 'nullable|string|max:255',
+            'status' => 'required|in:Aktif,Nonaktif',
+        ]);
+
+        $validatedData['password'] = Hash::make($request->password);
+        
+        User::create($validatedData);
+
+        return redirect()->route('admin.users.index')->with('success', 'Data user berhasil ditambahkan.');
     }
 
     /**

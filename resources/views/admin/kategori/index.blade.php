@@ -68,7 +68,7 @@
                                             name="nama_kategori" 
                                             value="{{ old('nama_kategori', $category->nama_kategori) }}" 
                                             required 
-                                            class="block w-full border border-slate-200 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm"
+                                            class="block w-full border border-slate-200 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm"
                                         >
                                     </div>
                                 </div>
@@ -129,7 +129,7 @@
                         name="nama_kategori" 
                         required 
                         placeholder="Contoh: Buku Ajar"
-                        class="block w-full border border-slate-200 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm"
+                        class="block w-full border border-slate-200 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm"
                     >
                 </div>
             </div>

@@ -66,6 +66,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::delete('/paket/{package}', [PackageController::class, 'destroy'])->name('paket.destroy');
     // users
     Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
+    Route::post('/users', [UserController::class, 'store'])->name('users.store');
     Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     Route::get('/profil', function () { return view('admin.profil'); });

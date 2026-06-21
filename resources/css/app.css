@@ -9,3 +9,10 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+/* Remove default black outline on focused inputs, selects, and textareas */
+input:focus, select:focus, textarea:focus {
+    outline: 2px solid transparent !important;
+    outline-offset: 2px !important;
+}
+

@@ -25,12 +25,12 @@
 
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1.5">Nama Lengkap</label>
-                    <input type="text" value="{{ Auth::user()->name }}" class="block w-full border border-slate-200 rounded-lg text-sm py-2.5 px-3 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm transition-all" required>
+                    <input type="text" value="{{ Auth::user()->name }}" class="block w-full border border-slate-200 rounded-lg text-sm py-2.5 px-3 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 shadow-sm transition-all" required>
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1.5">Alamat Email</label>
-                    <input type="email" value="{{ Auth::user()->email }}" class="block w-full border border-slate-200 rounded-lg text-sm py-2.5 px-3 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm transition-all bg-slate-50" readonly>
+                    <input type="email" value="{{ Auth::user()->email }}" class="block w-full border border-slate-200 rounded-lg text-sm py-2.5 px-3 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 shadow-sm transition-all bg-slate-50" readonly>
                     <p class="text-xs text-slate-500 mt-1.5">Email terikat dengan domain institusi dan tidak dapat diubah sembarangan.</p>
                 </div>
 
@@ -39,16 +39,16 @@
                     <div class="space-y-4">
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1.5">Password Saat Ini</label>
-                            <input type="password" class="block w-full border border-slate-200 rounded-lg text-sm py-2.5 px-3 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm transition-all" placeholder="••••••••">
+                            <input type="password" class="block w-full border border-slate-200 rounded-lg text-sm py-2.5 px-3 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 shadow-sm transition-all" placeholder="••••••••">
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-medium text-slate-700 mb-1.5">Password Baru</label>
-                                <input type="password" class="block w-full border border-slate-200 rounded-lg text-sm py-2.5 px-3 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm transition-all" placeholder="Minimal 8 karakter">
+                                <input type="password" class="block w-full border border-slate-200 rounded-lg text-sm py-2.5 px-3 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 shadow-sm transition-all" placeholder="Minimal 8 karakter">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-slate-700 mb-1.5">Konfirmasi Password Baru</label>
-                                <input type="password" class="block w-full border border-slate-200 rounded-lg text-sm py-2.5 px-3 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm transition-all" placeholder="Ulangi password baru">
+                                <input type="password" class="block w-full border border-slate-200 rounded-lg text-sm py-2.5 px-3 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 shadow-sm transition-all" placeholder="Ulangi password baru">
                             </div>
                         </div>
                     </div>
