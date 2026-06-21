@@ -79,7 +79,7 @@
                                             name="nama_paket" 
                                             value="{{ old('nama_paket', $package->nama_paket) }}" 
                                             required 
-                                            class="block w-full border border-slate-200 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm"
+                                            class="block w-full border border-slate-200 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm"
                                         >
                                     </div>
 
@@ -97,7 +97,7 @@
                                                     value="{{ old('harga', $package->harga) }}" 
                                                     required 
                                                     min="0"
-                                                    class="block w-full border border-slate-200 rounded-lg py-2 pl-9 pr-3 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm"
+                                                    class="block w-full border border-slate-200 rounded-lg py-2 pl-9 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm"
                                                 >
                                             </div>
                                         </div>
@@ -107,7 +107,7 @@
                                             <select 
                                                 id="status_{{ $package->id }}" 
                                                 name="status" 
-                                                class="block w-full border border-slate-200 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm bg-white"
+                                                class="block w-full border border-slate-200 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm bg-white"
                                             >
                                                 <option value="Aktif" {{ $package->status == 'Aktif' ? 'selected' : '' }}>Aktif</option>
                                                 <option value="Nonaktif" {{ $package->status == 'Nonaktif' ? 'selected' : '' }}>Nonaktif</option>
@@ -121,7 +121,7 @@
                                             id="description_{{ $package->id }}" 
                                             name="deskripsi" 
                                             rows="3" 
-                                            class="block w-full border border-slate-200 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm"
+                                            class="block w-full border border-slate-200 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm"
                                         >{{ old('deskripsi', $package->deskripsi) }}</textarea>
                                     </div>
                                 </div>
@@ -200,7 +200,7 @@
                                 required 
                                 min="0"
                                 placeholder="0"
-                                class="block w-full border border-slate-200 rounded-lg py-2 pl-9 pr-3 text-sm focus:outline-nonefocus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm"
+                                class="block w-full border border-slate-200 rounded-lg py-2 pl-9 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm"
                             >
                         </div>
                     </div>

@@ -6,6 +6,10 @@
 <x-card class="!p-0">
     <div class="flex justify-between items-center p-6 border-b border-slate-100">
         <h2 class="text-lg font-semibold text-slate-800">Daftar Pengguna</h2>
+        <x-button type="primary" @click="$dispatch('open-modal', 'modal-user-tambah')" class="shadow-sm">
+            <i class="bi bi-plus-lg mr-2 text-sm"></i>
+            Tambah Pengguna
+        </x-button>
     </div>
     
     <div class="overflow-x-auto">
@@ -28,6 +32,11 @@
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm font-semibold text-slate-900">{{ $user->name }}</div>
                             <div class="text-xs text-slate-500 mt-0.5">{{ $user->afiliasi ?? 'Tidak ada afiliasi' }}</div>
+                            @if($user->display_name !== $user->name)
+                                <div class="text-[11px] font-medium text-emerald-600 bg-emerald-50 border border-emerald-100/50 px-1.5 py-0.5 rounded inline-block mt-1">
+                                    {{ $user->display_name }}
+                                </div>
+                            @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{{ $user->email }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600 capitalize">
@@ -69,7 +78,7 @@
                                         name="name" 
                                         value="{{ old('name', $user->name) }}" 
                                         required 
-                                        class="block w-full border border-slate-200 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm"
+                                        class="block w-full border border-slate-200 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm"
                                     >
                                 </div>
 
@@ -81,7 +90,7 @@
                                         name="email" 
                                         value="{{ old('email', $user->email) }}" 
                                         required 
-                                        class="block w-full border border-slate-200 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm bg-slate-50 cursor-not-allowed"
+                                        class="block w-full border border-slate-200 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm bg-slate-50 cursor-not-allowed"
                                         readonly
                                     >
                                 </div>
@@ -92,12 +101,12 @@
                                         <select 
                                             id="role_{{ $user->id }}" 
                                             name="role" 
-                                            class="block w-full border border-slate-200 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm bg-white"
+                                            class="block w-full border border-slate-200 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm bg-white"
                                         >
-                                            <option value="author" {{ $user->role == 'author' ? 'selected' : '' }}>Author</option>
+                                            
                                             <option value="editor" {{ $user->role == 'editor' ? 'selected' : '' }}>Editor</option>
                                             <option value="reviewer" {{ $user->role == 'reviewer' ? 'selected' : '' }}>Reviewer</option>
-                                            <option value="admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Admin</option>
+                                            
                                         </select>
                                     </div>
 
@@ -107,7 +116,7 @@
                                         <select 
                                             id="status_{{ $user->id }}" 
                                             name="status" 
-                                            class="block w-full border border-slate-200 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm bg-white"
+                                            class="block w-full border border-slate-200 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm bg-white"
                                         >
                                             <option value="Aktif" {{ ($user->status ?? 'Aktif') == 'Aktif' ? 'selected' : '' }}>Aktif</option>
                                             <option value="Nonaktif" {{ ($user->status ?? 'Aktif') == 'Nonaktif' ? 'selected' : '' }}>Nonaktif</option>
@@ -123,7 +132,7 @@
                                         name="afiliasi" 
                                         value="{{ old('afiliasi', $user->afiliasi) }}" 
                                         placeholder="Contoh: Universitas Pembangunan Nasional Veteran Jakarta"
-                                        class="block w-full border border-slate-200 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm"
+                                        class="block w-full border border-slate-200 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm"
                                     >
                                 </div>
                             </div>
@@ -169,4 +178,93 @@
         </table>
     </div>
 </x-card>
+
+    <!-- ========================================== -->
+    <!-- 4. MODAL TAMBAH USER (DI LUAR LOOPING) -->
+    <!-- ========================================== -->
+    <x-modal name="modal-user-tambah" title="Tambah Pengguna Baru">
+        <form action="{{ route('users.store') }}" method="POST">
+            @csrf
+            <div class="space-y-4">
+                <div>
+                    <label for="name" class="block text-sm font-medium text-slate-700 mb-1">Nama Lengkap <span class="text-rose-500">*</span></label>
+                    <input 
+                        type="text" 
+                        id="name" 
+                        name="name" 
+                        required 
+                        placeholder="Contoh: Ahmad Fauzi"
+                        class="block w-full border border-slate-200 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm"
+                    >
+                </div>
+
+                <div>
+                    <label for="email" class="block text-sm font-medium text-slate-700 mb-1">Alamat Email <span class="text-rose-500">*</span></label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        required 
+                        placeholder="Contoh: ahmad@example.com"
+                        class="block w-full border border-slate-200 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm"
+                    >
+                </div>
+
+                <div>
+                    <label for="password" class="block text-sm font-medium text-slate-700 mb-1">Password <span class="text-rose-500">*</span></label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        required 
+                        placeholder="Minimal 8 karakter"
+                        class="block w-full border border-slate-200 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm"
+                    >
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label for="role" class="block text-sm font-medium text-slate-700 mb-1">Role / Peran <span class="text-rose-500">*</span></label>
+                        <select 
+                            id="role" 
+                            name="role" 
+                            class="block w-full border border-slate-200 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm bg-white"
+                        >
+                            <option value="editor">Editor</option>
+                            <option value="reviewer">Reviewer</option>
+                            
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="status" class="block text-sm font-medium text-slate-700 mb-1">Status Akun <span class="text-rose-500">*</span></label>
+                        <select 
+                            id="status" 
+                            name="status" 
+                            class="block w-full border border-slate-200 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm bg-white"
+                        >
+                            <option value="Aktif">Aktif</option>
+                            <option value="Nonaktif">Nonaktif</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="afiliasi" class="block text-sm font-medium text-slate-700 mb-1">Afiliasi / Instansi</label>
+                    <input 
+                        type="text" 
+                        id="afiliasi" 
+                        name="afiliasi" 
+                        placeholder="Contoh: Universitas Indonesia"
+                        class="block w-full border border-slate-200 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm"
+                    >
+                </div>
+            </div>
+
+            <div class="mt-6 sm:flex sm:flex-row-reverse gap-2">
+                <x-button typeHtml="submit" type="primary">Simpan Pengguna</x-button>
+                <x-button type="button" @click="$dispatch('close-modal', 'modal-user-tambah')" type="secondary">Batal</x-button>
+            </div>
+        </form>
+    </x-modal>
 @endsection

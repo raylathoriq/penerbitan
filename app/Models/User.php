@@ -39,4 +39,19 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Mendapatkan nama tampilan yang aman untuk penulis (anonymity).
+     */
+    public function getDisplayNameAttribute(): string
+    {
+        if ($this->role === 'editor') {
+            return 'Editor LPPM Press';
+        }
+        if ($this->role === 'reviewer') {
+            return 'Reviewer';
+        }
+        return $this->name;
+    }
 }
+
