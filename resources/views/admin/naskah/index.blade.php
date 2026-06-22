@@ -3,22 +3,23 @@
 @section('page_title', 'Manajemen Naskah')
 
 @section('content')
-<div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<form action="{{ route('admin.naskah.index') }}" method="GET" class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
     <div class="flex-1 max-w-md relative">
-        <input type="text" placeholder="Cari judul naskah atau author..." class="block w-full pl-10 pr-3 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm shadow-sm placeholder-slate-400 transition-all">
+        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari judul naskah atau author..." class="block w-full pl-10 pr-3 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm shadow-sm placeholder-slate-400 transition-all focus:outline-none">
         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
         </div>
     </div>
     <div class="flex items-center gap-3">
-        <select class="block w-full py-2.5 pl-3 pr-10 border border-slate-200 rounded-lg text-sm focus:ring-emerald-500 focus:border-emerald-500 shadow-sm text-slate-600 transition-all bg-white">
-            <option>Semua Status</option>
-            <option>Diajukan</option>
-            <option>Dalam Review</option>
-            <option>Revisi</option>
+        <select name="status" onchange="this.form.submit()" class="block w-full py-2.5 pl-3 pr-10 border border-slate-200 rounded-lg text-sm focus:ring-emerald-500 focus:border-emerald-500 shadow-sm text-slate-600 transition-all bg-white focus:outline-none">
+            <option value="Semua Status" {{ request('status') == 'Semua Status' ? 'selected' : '' }}>Semua Status</option>
+            <option value="Diajukan" {{ request('status') == 'Diajukan' ? 'selected' : '' }}>Diajukan</option>
+            <option value="Dalam Review" {{ request('status') == 'Dalam Review' ? 'selected' : '' }}>Dalam Review</option>
+            <option value="Revisi" {{ request('status') == 'Revisi' ? 'selected' : '' }}>Revisi</option>
+            <option value="Terbit" {{ request('status') == 'Terbit' ? 'selected' : '' }}>Terbit</option>
         </select>
     </div>
-</div>
+</form>
 
 <x-card class="!p-0">
     <div class="overflow-x-auto">
@@ -32,16 +33,31 @@
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-slate-50">
-                <tr class="hover:bg-slate-50/50 transition-colors">
-                    <td class="px-6 py-4 text-sm font-medium text-slate-900 w-1/3">
-                        <div class="truncate max-w-md" title="Dasar Logika Matematika">Dasar Logika Matematika</div>
-                    </td>
-                    <td class="px-6 py-4 text-sm text-slate-600">Dr. Budi</td>
-                    <td class="px-6 py-4 whitespace-nowrap"><x-badge status="Diajukan" /></td>
-                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <a href="/admin/naskah/1" class="text-emerald-600 hover:text-emerald-800 transition-colors">Review</a>
-                    </td>
-                </tr>
+                @forelse($submissions as $submission)
+                    <tr class="hover:bg-slate-50/50 transition-colors">
+                        <td class="px-6 py-4 text-sm font-medium text-slate-900 w-1/3">
+                            <div class="truncate max-w-md" title="{{ $submission->title }}">{{ $submission->title }}</div>
+                            <div class="text-[11px] text-slate-400 mt-0.5">
+                                Kategori: {{ $submission->category->nama_kategori }} | Paket: {{ $submission->package->nama_paket }}
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 text-sm text-slate-600">
+                            {{ $submission->user->name }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <x-badge :status="$submission->status" />
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <a href="/admin/naskah/{{ $submission->id }}" class="text-emerald-600 hover:text-emerald-800 transition-colors">Review</a>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="4" class="px-6 py-10 text-center text-sm text-slate-500">
+                            Belum ada naskah yang diajukan oleh Author.
+                        </td>
+                    </tr>
+                @endforelse
             </tbody>
         </table>
     </div>

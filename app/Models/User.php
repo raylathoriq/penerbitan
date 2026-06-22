@@ -53,5 +53,14 @@ class User extends Authenticatable
         }
         return $this->name;
     }
+
+    /**
+     * Get the submissions (manuscripts) made by this user.
+     */
+    public function submissions(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Submission::class);
+    }
 }
+
 

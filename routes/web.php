@@ -2,6 +2,7 @@
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PackageController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\SubmissionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -51,7 +52,7 @@ Route::prefix('editor')->middleware('auth')->group(function () {
 Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/', function () { return redirect('/admin/dashboard'); });
     Route::get('/dashboard', function () { return view('admin.dashboard'); });
-    Route::get('/naskah', function () { return view('admin.naskah.index'); });
+    Route::get('/naskah', [SubmissionController::class, 'adminIndex'])->name('admin.naskah.index');
     Route::get('/naskah/{id}', function () { return view('admin.naskah.detail'); });
     Route::get('/publication', function () { return view('admin.publication.form'); });
     // kategori
@@ -75,10 +76,11 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 // Author
 Route::prefix('author')->middleware('auth')->group(function () {
     Route::get('/', function () { return redirect('/author/dashboard'); });
-    Route::get('/dashboard', function () { return view('author.dashboard'); });
-    Route::get('/naskah', function () { return view('author.list-naskah'); });
-    Route::get('/upload', function () { return view('author.upload'); });
-    Route::get('/naskah/{id}', function () { return view('author.detail-naskah'); });
+    Route::get('/dashboard', [SubmissionController::class, 'authorDashboard'])->name('author.dashboard');
+    Route::get('/naskah', [SubmissionController::class, 'authorIndex'])->name('author.naskah.index');
+    Route::get('/upload', [SubmissionController::class, 'authorCreate'])->name('author.naskah.create');
+    Route::post('/upload', [SubmissionController::class, 'authorStore'])->name('author.naskah.store');
+    Route::get('/naskah/{id}', [SubmissionController::class, 'authorShow'])->name('author.naskah.show');
     Route::get('/revisi/{id}', function () { return view('author.revisi'); });
     Route::get('/profil', function () { return view('author.profil'); });
 });

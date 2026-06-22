@@ -3,35 +3,50 @@
 @section('page_title', 'Form Pengajuan Naskah')
 
 @section('content')
-<div class="max-w-3xl">
+<div class="max-w-3xl" x-data="{ coAuthors: [], fileName: '' }">
     <x-card>
         <x-slot name="header">
             <h3 class="text-lg font-semibold text-slate-900">Detail Publikasi</h3>
             <p class="text-sm text-slate-500 mt-1">Lengkapi informasi buku yang akan diajukan ke Dewan Redaksi.</p>
         </x-slot>
-        <form action="#" method="POST" onsubmit="event.preventDefault(); window.location.href='/author/naskah';">
+        
+        <form action="{{ route('author.naskah.store') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            
             <div class="space-y-6">
+                <!-- Dropdown Kategori -->
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Kategori Naskah</label>
-                    <select class="block w-full rounded-lg border-slate-200 py-2.5 px-3 focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm border shadow-sm transition-all" required>
+                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Kategori Naskah <span class="text-rose-500">*</span></label>
+                    <select name="category_id" class="block w-full rounded-lg border-slate-200 py-2.5 px-3 focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm border shadow-sm transition-all focus:outline-none" required>
                         <option value="" disabled selected>Pilih Kategori Bidang Ilmu...</option>
-                        <option value="1">Buku Ajar</option>
-                        <option value="2">Buku Referensi</option>
-                        <option value="3">Monograf</option>
-                        <option value="4">Buku Fiksi / Sastra</option>
-                        <option value="5">Panduan / Modul Praktikum</option>
+                        @foreach($categories as $category)
+                            <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>{{ $category->nama_kategori }}</option>
+                        @endforeach
                     </select>
                 </div>
 
+                <!-- Dropdown Paket -->
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Judul Buku</label>
-                    <input type="text" class="block w-full rounded-lg border-slate-200 py-2.5 px-3 focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm border shadow-sm transition-all" required>
+                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Paket Penerbitan <span class="text-rose-500">*</span></label>
+                    <select name="package_id" class="block w-full rounded-lg border-slate-200 py-2.5 px-3 focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm border shadow-sm transition-all focus:outline-none" required>
+                        <option value="" disabled selected>Pilih Paket Penerbitan...</option>
+                        @foreach($packages as $package)
+                            <option value="{{ $package->id }}" {{ old('package_id') == $package->id ? 'selected' : '' }}>{{ $package->nama_paket }} (Rp {{ number_format($package->harga, 0, ',', '.') }})</option>
+                        @endforeach
+                    </select>
                 </div>
 
-                <div x-data="{ coAuthors: [] }" class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm">
+                <!-- Judul Buku -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Judul Buku <span class="text-rose-500">*</span></label>
+                    <input type="text" name="title" value="{{ old('title') }}" class="block w-full rounded-lg border-slate-200 py-2.5 px-3 focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm border shadow-sm transition-all focus:outline-none" required>
+                </div>
+
+                <!-- Penulis Utama & Co-Authors -->
+                <div class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm">
                     <div class="mb-5">
                         <label class="block text-sm font-medium text-slate-700 mb-1.5">Penulis Utama (Anda)</label>
-                        <input type="text" value="Dr. Budi Santoso (Author Login)" class="block w-full rounded-lg border-slate-200 bg-slate-50 text-slate-500 py-2.5 px-3 sm:text-sm border shadow-sm" readonly>
+                        <input type="text" value="{{ auth()->user()->name }}" class="block w-full rounded-lg border-slate-200 bg-slate-50 text-slate-500 py-2.5 px-3 sm:text-sm border shadow-sm" readonly>
                     </div>
 
                     <div class="mb-3 flex items-center justify-between">
@@ -51,11 +66,11 @@
                                 
                                 <div class="pr-10 space-y-3">
                                     <div>
-                                        <input type="text" x-model="author.name" placeholder="Nama Lengkap dengan Gelar" class="block w-full rounded-lg border-slate-200 py-2.5 px-3 focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm border shadow-sm transition-all" required>
+                                        <input type="text" :name="'co_authors['+index+'][name]'" x-model="author.name" placeholder="Nama Lengkap dengan Gelar" class="block w-full rounded-lg border-slate-200 py-2.5 px-3 focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm border shadow-sm transition-all focus:outline-none" required>
                                     </div>
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                        <input type="email" x-model="author.email" placeholder="Alamat Email" class="block w-full rounded-lg border-slate-200 py-2.5 px-3 focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm border shadow-sm transition-all" required>
-                                        <input type="text" x-model="author.affiliation" placeholder="Afiliasi/Institusi" class="block w-full rounded-lg border-slate-200 py-2.5 px-3 focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm border shadow-sm transition-all" required>
+                                        <input type="email" :name="'co_authors['+index+'][email]'" x-model="author.email" placeholder="Alamat Email" class="block w-full rounded-lg border-slate-200 py-2.5 px-3 focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm border shadow-sm transition-all focus:outline-none" required>
+                                        <input type="text" :name="'co_authors['+index+'][affiliation]'" x-model="author.affiliation" placeholder="Afiliasi/Institusi" class="block w-full rounded-lg border-slate-200 py-2.5 px-3 focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm border shadow-sm transition-all focus:outline-none" required>
                                     </div>
                                 </div>
                             </div>
@@ -67,13 +82,15 @@
                     </div>
                 </div>
 
+                <!-- Sinopsis -->
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Abstrak / Sinopsis Singkat</label>
-                    <textarea rows="5" class="block w-full rounded-lg border-slate-200 p-3 focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm border shadow-sm transition-all" required></textarea>
+                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Abstrak / Sinopsis Singkat <span class="text-rose-500">*</span></label>
+                    <textarea name="sinopsis" rows="5" class="block w-full rounded-lg border-slate-200 p-3 focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm border shadow-sm transition-all focus:outline-none" required>{{ old('sinopsis') }}</textarea>
                 </div>
 
+                <!-- Upload File -->
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Upload File Naskah (PDF/DOCX)</label>
+                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Upload File Naskah (PDF/DOCX) <span class="text-rose-500">*</span></label>
                     <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-200 border-dashed rounded-xl bg-slate-50/50 hover:bg-slate-50 transition-colors">
                         <div class="space-y-1 text-center">
                             <svg class="mx-auto h-10 w-10 text-slate-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
@@ -82,17 +99,19 @@
                             <div class="flex text-sm text-slate-600 justify-center">
                                 <label class="relative cursor-pointer bg-white rounded-md font-medium text-emerald-600 hover:text-emerald-500">
                                     <span>Pilih file</span>
-                                    <input type="file" class="sr-only" required>
+                                    <input type="file" name="file_naskah" class="sr-only" required @change="fileName = $event.target.files[0] ? $event.target.files[0].name : ''">
                                 </label>
                                 <p class="pl-1">atau drag and drop</p>
                             </div>
+                            <div x-show="fileName" class="text-xs text-emerald-600 font-semibold mt-2" x-text="'File terpilih: ' + fileName"></div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Persyaratan -->
                 <div class="flex items-start bg-slate-50 p-4 rounded-lg border border-slate-100">
                     <div class="flex items-center h-5">
-                        <input id="persyaratan" type="checkbox" class="focus:ring-emerald-500 h-4 w-4 text-emerald-600 border-slate-300 rounded" required>
+                        <input id="persyaratan" type="checkbox" class="focus:ring-emerald-500 h-4 w-4 text-emerald-600 border-slate-300 rounded focus:outline-none" required>
                     </div>
                     <div class="ml-3 text-sm">
                         <label for="persyaratan" class="font-medium text-slate-700">Pernyataan Orisinalitas</label>
@@ -100,6 +119,7 @@
                     </div>
                 </div>
                 
+                <!-- Buttons -->
                 <div class="pt-4 border-t border-slate-100 flex justify-end gap-3">
                     <x-button type="secondary" onclick="window.history.back()">Batal</x-button>
                     <x-button type="primary" typeHtml="submit">Submit Naskah</x-button>

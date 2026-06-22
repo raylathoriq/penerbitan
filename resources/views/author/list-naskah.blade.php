@@ -22,31 +22,34 @@
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-slate-50">
-                <tr class="hover:bg-slate-50/50 transition-colors">
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">Analisis Struktur Basis Data</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">10 Mei 2026</td>
-                    <td class="px-6 py-4 whitespace-nowrap"><x-badge status="Dalam Review" /></td>
-                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-3">
-                        <a href="/author/naskah/1" class="text-slate-500 hover:text-slate-900 transition-colors">Detail</a>
-                    </td>
-                </tr>
-                <tr class="hover:bg-slate-50/50 transition-colors">
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">Kalkulus Lanjut</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">01 Mei 2026</td>
-                    <td class="px-6 py-4 whitespace-nowrap"><x-badge status="Revisi" /></td>
-                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-3">
-                        <a href="/author/revisi/2" class="text-orange-600 hover:text-orange-800 transition-colors">Kirim Revisi</a>
-                        <a href="/author/naskah/2" class="text-slate-500 hover:text-slate-900 transition-colors">Detail</a>
-                    </td>
-                </tr>
-                <tr class="hover:bg-slate-50/50 transition-colors">
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">Panduan Laravel Dasar</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">05 Apr 2026</td>
-                    <td class="px-6 py-4 whitespace-nowrap"><x-badge status="Terbit" /></td>
-                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-3">
-                        <a href="/author/naskah/3" class="text-slate-500 hover:text-slate-900 transition-colors">Detail</a>
-                    </td>
-                </tr>
+                @forelse($submissions as $submission)
+                    <tr class="hover:bg-slate-50/50 transition-colors">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">
+                            {{ $submission->title }}
+                            <div class="text-[11px] text-slate-400 mt-0.5">
+                                Kategori: {{ $submission->category->nama_kategori }} | Paket: {{ $submission->package->nama_paket }}
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
+                            {{ $submission->created_at->format('d M Y') }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <x-badge :status="$submission->status" />
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-3">
+                            @if($submission->status === 'Revisi')
+                                <a href="/author/revisi/{{ $submission->id }}" class="text-orange-600 hover:text-orange-800 transition-colors">Kirim Revisi</a>
+                            @endif
+                            <a href="/author/naskah/{{ $submission->id }}" class="text-slate-500 hover:text-slate-900 transition-colors">Detail</a>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="4" class="px-6 py-10 text-center text-sm text-slate-500">
+                            Belum ada naskah yang diajukan. Silakan ajukan naskah baru.
+                        </td>
+                    </tr>
+                @endforelse
             </tbody>
         </table>
     </div>
