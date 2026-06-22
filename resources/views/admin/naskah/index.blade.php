@@ -13,10 +13,11 @@
     <div class="flex items-center gap-3">
         <select name="status" onchange="this.form.submit()" class="block w-full py-2.5 pl-3 pr-10 border border-slate-200 rounded-lg text-sm focus:ring-emerald-500 focus:border-emerald-500 shadow-sm text-slate-600 transition-all bg-white focus:outline-none">
             <option value="Semua Status" {{ request('status') == 'Semua Status' ? 'selected' : '' }}>Semua Status</option>
-            <option value="Diajukan" {{ request('status') == 'Diajukan' ? 'selected' : '' }}>Diajukan</option>
-            <option value="Dalam Review" {{ request('status') == 'Dalam Review' ? 'selected' : '' }}>Dalam Review</option>
-            <option value="Revisi" {{ request('status') == 'Revisi' ? 'selected' : '' }}>Revisi</option>
-            <option value="Terbit" {{ request('status') == 'Terbit' ? 'selected' : '' }}>Terbit</option>
+            <option value="diajukan" {{ request('status') == 'diajukan' ? 'selected' : '' }}>Diajukan</option>
+            <option value="dalam review" {{ request('status') == 'dalam review' ? 'selected' : '' }}>Dalam Review</option>
+            <option value="revisi" {{ request('status') == 'revisi' ? 'selected' : '' }}>Revisi</option>
+            <option value="diterima" {{ request('status') == 'diterima' ? 'selected' : '' }}>Diterima</option>
+            <option value="ditolak" {{ request('status') == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
         </select>
     </div>
 </form>
@@ -28,32 +29,37 @@
                 <tr class="bg-slate-50/75">
                     <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-widest">Judul Naskah</th>
                     <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-widest">Author</th>
+                    <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-widest">Tanggal</th>
                     <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-widest">Status</th>
                     <th scope="col" class="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-widest">Aksi</th>
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-slate-50">
-                @forelse($submissions as $submission)
+                @forelse($naskahs as $naskah)
                     <tr class="hover:bg-slate-50/50 transition-colors">
                         <td class="px-6 py-4 text-sm font-medium text-slate-900 w-1/3">
-                            <div class="truncate max-w-md" title="{{ $submission->title }}">{{ $submission->title }}</div>
+                            <div class="truncate max-w-md" title="{{ $naskah->title }}">{{ $naskah->title }}</div>
                             <div class="text-[11px] text-slate-400 mt-0.5">
-                                Kategori: {{ $submission->category->nama_kategori }} | Paket: {{ $submission->package->nama_paket }}
+                                Kategori: {{ $naskah->category->nama_kategori ?? '-' }} | Paket: {{ $naskah->package->nama_paket ?? '-' }}
                             </div>
                         </td>
                         <td class="px-6 py-4 text-sm text-slate-600">
-                            {{ $submission->user->name }}
+                            {{ $naskah->user->name ?? '-' }}
+                        </td>
+                        @php $admDate = $naskah->submitted_at ?? $naskah->created_at; @endphp
+                        <td class="px-6 py-4 text-sm text-slate-500">
+                            {{ $admDate ? $admDate->copy()->setTimezone('Asia/Jakarta')->locale('id')->translatedFormat('d F Y H:i') . ' WIB' : '-' }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <x-badge :status="$submission->status" />
+                            <x-badge :status="$naskah->status" />
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <a href="/admin/naskah/{{ $submission->id }}" class="text-emerald-600 hover:text-emerald-800 transition-colors">Review</a>
+                            <a href="{{ route('admin.naskah.show', $naskah->id) }}" class="text-emerald-600 hover:text-emerald-800 transition-colors">Review</a>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="4" class="px-6 py-10 text-center text-sm text-slate-500">
+                        <td colspan="5" class="px-6 py-10 text-center text-sm text-slate-500">
                             Belum ada naskah yang diajukan oleh Author.
                         </td>
                     </tr>

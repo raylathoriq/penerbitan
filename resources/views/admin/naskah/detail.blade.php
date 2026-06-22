@@ -15,27 +15,50 @@
         <x-card>
             <div class="flex justify-between items-start mb-6">
                 <div>
-                    <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Dasar Logika Matematika</h2>
-                    <p class="text-slate-500 mt-1">Diajukan oleh Dr. Budi Santoso</p>
+                    <h2 class="text-2xl font-bold text-slate-900 tracking-tight">{{ $naskah->title }}</h2>
+                    <p class="text-slate-500 mt-1">Diajukan oleh {{ $naskah->user->name ?? '-' }}</p>
+                    @php $detailDate = $naskah->submitted_at ?? $naskah->created_at; @endphp
+                    <p class="text-xs text-slate-400 mt-0.5">Diajukan pada: {{ $detailDate ? $detailDate->copy()->setTimezone('Asia/Jakarta')->locale('id')->translatedFormat('d F Y H:i') . ' WIB' : '-' }}</p>
                 </div>
-                <x-badge status="Diajukan" />
+                <x-badge status="{{ $naskah->status_label }}" />
             </div>
+
+            <div class="mb-5 text-sm">
+                <span class="text-slate-500">Kategori:</span> <span class="font-semibold text-emerald-800">{{ $naskah->category->nama_kategori ?? '-' }}</span>
+                <span class="mx-2 text-slate-300">|</span>
+                <span class="text-slate-500">Paket:</span> <span class="font-semibold text-emerald-800">{{ $naskah->package->nama_paket ?? '-' }}</span>
+            </div>
+
+            @if(!empty($naskah->co_author))
+                <div class="mb-5 text-sm p-4 bg-slate-50/50 border border-slate-100 rounded-xl">
+                    <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Penulis Pendamping</h4>
+                    <div class="space-y-1">
+                        @foreach($naskah->co_author as $co)
+                            <p class="text-slate-700">— {{ $co['name'] ?? '-' }} ({{ $co['affiliation'] ?? '-' }}) <span class="text-slate-400">&lt;{{ $co['email'] ?? '-' }}&gt;</span></p>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
             
-            <div class="prose prose-slate max-w-none text-sm">
-                <p>Naskah ini membahas secara komprehensif terkait struktur bla bla bla...</p>
+            <div class="prose prose-slate max-w-none text-sm border-t border-slate-100 pt-5">
+                <p>{{ $naskah->description ?? 'Tidak ada deskripsi yang tersedia untuk naskah ini.' }}</p>
             </div>
 
             <div class="mt-8 border-t border-slate-100 pt-6">
                 <h4 class="text-sm font-semibold text-slate-900 mb-3">Dokumen Naskah</h4>
-                <a href="#" class="inline-flex items-center p-3 border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-colors group">
-                    <div class="bg-rose-100 text-rose-600 p-2 rounded mr-3">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
-                    </div>
-                    <div>
-                        <p class="text-sm font-medium text-slate-900 group-hover:text-emerald-700 transition-colors">Naskah_Logika_Final.pdf</p>
-                        <p class="text-xs text-slate-500">2.4 MB</p>
-                    </div>
-                </a>
+                @if($naskah->document_path)
+                    <a href="{{ asset('storage/' . $naskah->document_path) }}" target="_blank" class="inline-flex items-center p-3 border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-colors group">
+                        <div class="bg-rose-100 text-rose-600 p-2 rounded mr-3">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-slate-900 group-hover:text-emerald-700 transition-colors">{{ $naskah->document_name ?? 'Dokumen tidak tersedia' }}</p>
+                            <p class="text-xs text-slate-500">{{ $naskah->document_size ?? '-' }}</p>
+                        </div>
+                    </a>
+                @else
+                    <p class="text-sm text-slate-500">File tidak tersedia.</p>
+                @endif
             </div>
         </x-card>
     </div>
