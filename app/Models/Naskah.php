@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-#[Fillable(['title', 'category', 'author_id', 'author_name', 'status', 'description', 'document_name', 'document_path', 'document_size', 'submitted_at'])]
+#[Fillable(['title', 'category', 'author_id', 'author_name', 'reviewer_id', 'reviewer_name', 'status', 'description', 'document_name', 'document_path', 'document_size', 'submitted_at'])]
 class Naskah extends Model
 {
     use HasFactory;

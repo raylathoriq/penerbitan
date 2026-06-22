@@ -5,13 +5,13 @@
 
     @section('content')
    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-     <x-card class="border-l-4 border-l-indigo-400">
-            <div class="text-indigo-500 text-sm font-medium tracking-wide">Menunggu Review</div>
-            <div class="text-4xl font-bold text-indigo-900 mt-3 tracking-tight">5</div>
-     </x-card>
+         <x-card class="border-l-4 border-l-indigo-400">
+             <div class="text-indigo-500 text-sm font-medium tracking-wide">Menunggu Review</div>
+             <div class="text-4xl font-bold text-indigo-900 mt-3 tracking-tight">{{ $assignedCount ?? 0 }}</div>
+         </x-card>
      <x-card class="border-l-4 border-l-emerald-400">
-            <div class="text-emerald-700 text-sm font-medium tracking-wide">Selesai Review</div>
-            <div class="text-4xl font-bold text-emerald-900 mt-3 tracking-tight">2</div>
+             <div class="text-emerald-700 text-sm font-medium tracking-wide">Selesai Review</div>
+             <div class="text-4xl font-bold text-emerald-900 mt-3 tracking-tight">{{ $completedCount ?? 0 }}</div>
      </x-card>
     </div>
 

@@ -19,11 +19,11 @@
             <div class="space-y-4">
                 <div>
                     <h4 class="text-slate-500 text-xs font-medium">Judul Naskah</h4>
-                    <p class="text-sm font-medium text-slate-900 mt-1">Dasar Logika Matematika</p>
+                    <p class="text-sm font-medium text-slate-900 mt-1">{{ $naskah->title }}</p>
                 </div>
                 <div>
                     <h4 class="text-slate-500 text-xs font-medium">Abstrak / Sinopsis</h4>
-                    <p class="text-sm text-slate-700 mt-1 line-clamp-4">Naskah ini membahas secara komprehensif terkait struktur bla bla bla logika dan himpunan dalam matematika diskrit...</p>
+                    <p class="text-sm text-slate-700 mt-1 line-clamp-4">{{ $naskah->description ?? '-' }}</p>
                 </div>
                 <div class="pt-4 border-t border-slate-100">
                     <h4 class="text-slate-500 text-xs font-medium mb-2">Instruksi Khusus dari Redaksi</h4>
@@ -33,13 +33,17 @@
                 </div>
                 <div class="pt-4 border-t border-slate-100">
                     <h4 class="text-slate-500 text-xs font-medium mb-3">Unduh Dokumen Naskah</h4>
-                    <a href="#" class="inline-flex items-center w-full justify-between p-3 border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-colors group">
-                        <div class="flex items-center">
-                            <svg class="w-5 h-5 text-indigo-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
-                            <span class="text-sm font-medium text-slate-900">naskah_logika_final.pdf</span>
-                        </div>
-                        <svg class="w-4 h-4 text-slate-400 group-hover:text-indigo-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                    </a>
+                    @if($naskah->document_path)
+                        <a href="{{ asset('storage/'.$naskah->document_path) }}" target="_blank" rel="noreferrer" class="inline-flex items-center w-full justify-between p-3 border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-colors group">
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 text-indigo-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                                <span class="text-sm font-medium text-slate-900">{{ $naskah->document_name ?? basename($naskah->document_path) }}</span>
+                            </div>
+                            <svg class="w-4 h-4 text-slate-400 group-hover:text-indigo-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                        </a>
+                    @else
+                        <p class="text-sm text-slate-500">Tidak ada dokumen terlampir.</p>
+                    @endif
                 </div>
             </div>
         </div>
@@ -51,7 +55,8 @@
             <h3 class="text-lg font-semibold text-slate-900 mb-1">Form Pengisian Review</h3>
             <p class="text-sm text-slate-500 mb-6">Silakan berikan penilaian objektif Anda terhadap naskah ini. Hasil review akan diteruskan ke tim redaksi untuk ditindaklanjuti ke penulis.</p>
 
-            <form action="#" method="POST" class="space-y-6">
+            <form action="{{ route('reviewer.naskah.submitReview', $naskah->id) }}" method="POST" class="space-y-6">
+                @csrf
                 <!-- Status Rekomendasi (Sesuai kolom `status` di tabel `reviews`) -->
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-2">Rekomendasi Reviewer <span class="text-rose-500">*</span></label>

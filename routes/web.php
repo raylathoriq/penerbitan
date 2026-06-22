@@ -63,8 +63,10 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
         return view('admin.dashboard', compact('total', 'inReview', 'published', 'rejected', 'recent'));
     });
-    Route::get('/naskah', [NaskahController::class, 'index']);
-    Route::get('/naskah/{id}', [NaskahController::class, 'show']);
+    Route::get('/naskah', [NaskahController::class, 'index'])->name('admin.naskah.index');
+    Route::get('/naskah/{id}', [NaskahController::class, 'show'])->name('admin.naskah.show');
+    Route::put('/naskah/{id}', [NaskahController::class, 'update'])->name('admin.naskah.update');
+    Route::post('/naskah/{id}/assign-reviewer', [NaskahController::class, 'assignReviewer'])->name('admin.naskah.assignReviewer');
     Route::get('/publication', function () { return view('admin.publication.form'); });
     // kategori
     Route::get('/kategori', [CategoryController::class, 'index'])->name('admin.kategori.index');
@@ -110,7 +112,42 @@ Route::prefix('reviewer')->group(function () {
 
 Route::prefix('reviewer')->middleware('auth')->group(function () {
     Route::get('/', function () { return redirect('/reviewer/dashboard'); });
-    Route::get('/dashboard', function () { return view('reviewer.dashboard'); });
-    Route::get('/naskah', function () { return view('reviewer.naskah.index'); });
-    Route::get('/naskah/{id}', function () { return view('reviewer.naskah.detail'); });
+    Route::get('/dashboard', function () {
+        $user = auth()->user();
+        $assignedCount = \App\Models\Naskah::where('reviewer_id', $user->id)->count();
+        $completedCount = \App\Models\Naskah::where('reviewer_id', $user->id)->where('status', '<>', 'dalam review')->count();
+
+        return view('reviewer.dashboard', compact('assignedCount', 'completedCount'));
+    });
+
+    Route::get('/naskah', function () {
+        $user = auth()->user();
+        $assignments = \App\Models\Naskah::where('reviewer_id', $user->id)->orderByDesc('created_at')->get();
+
+        return view('reviewer.naskah.index', compact('assignments'));
+    })->name('reviewer.naskah.index');
+
+    Route::get('/naskah/{id}', function ($id) {
+        $naskah = \App\Models\Naskah::findOrFail($id);
+        abort_unless($naskah->reviewer_id === auth()->id(), 403);
+
+        return view('reviewer.naskah.detail', compact('naskah'));
+    });
+
+    Route::post('/naskah/{id}/submit-review', function ($id) {
+        $request = request();
+        $request->validate([
+            'status' => 'required|in:diterima,revisi,ditolak',
+            'reviewer_notes' => 'required|string|min:10',
+        ]);
+
+        $naskah = \App\Models\Naskah::findOrFail($id);
+        abort_unless($naskah->reviewer_id === auth()->id(), 403);
+
+        $naskah->status = $request->status;
+        $naskah->save();
+
+        return redirect()->route('reviewer.naskah.index')
+            ->with('success', 'Hasil review berhasil dikirim ke redaksi.');
+    })->name('reviewer.naskah.submitReview');
 });
