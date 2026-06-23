@@ -24,23 +24,23 @@
             <tbody class="divide-y divide-slate-100">
                 @if(isset($assignments) && $assignments->count())
                     @foreach($assignments as $naskah)
+                        @php $review = $naskah->activeReviewAssignment; @endphp
                         <tr class="hover:bg-slate-50/50 transition-colors">
                             <td class="px-6 py-4">
                                 <div class="font-medium text-slate-900">{{ $naskah->title }}</div>
-                                <div class="text-xs text-slate-500 mt-0.5">Oleh: {{ $naskah->author_name }}</div>
+                                <div class="text-xs text-slate-500 mt-0.5">Oleh: {{ $naskah->user->name ?? '-' }}</div>
                             </td>
-                            <td class="px-6 py-4 text-slate-600 max-w-xs truncate">
-                                {{-- no instruksi field saved currently --}}
-                                -
+                            <td class="px-6 py-4 text-slate-600 max-w-xs truncate" title="{{ $review->assignment_note ?? '-' }}">
+                                {{ $review->assignment_note ?? '-' }}
                             </td>
                             <td class="px-6 py-4">
-                                @if($naskah->status === 'dalam review')
-                                    <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-600/20">Perlu Review</span>
-                                @else
+                                @if($review && $review->reviewed_at)
                                     <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-600/20">Selesai Review</span>
+                                @else
+                                    <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-600/20">Perlu Review</span>
                                 @endif
                             </td>
-                            <td class="px-6 py-4 text-slate-600">{{ $naskah->updated_at ? $naskah->updated_at->copy()->setTimezone('Asia/Jakarta')->locale('id')->translatedFormat('d F Y') : '-' }}</td>
+                            <td class="px-6 py-4 text-slate-600">{{ $review && $review->reviewed_at ? $review->reviewed_at->copy()->setTimezone('Asia/Jakarta')->locale('id')->translatedFormat('d F Y') : '-' }}</td>
                             <td class="px-6 py-4 ">
                                 <a href="{{ url('/reviewer/naskah/'.$naskah->id) }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-700">Mulai Review</a>
                             </td>

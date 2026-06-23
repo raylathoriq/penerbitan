@@ -31,24 +31,43 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
-                    <tr class="hover:bg-slate-50/50 transition-colors">
-                        <td class="px-6 py-4">
-                            <div class="font-medium text-slate-900">Dasar Logika Matematika</div>
-                            <div class="text-xs text-slate-500 mt-0.5">Oleh: Dr. Budi Santoso</div>
-                        </td>
-                        <td class="px-6 py-4 text-slate-600">01 Jun 2026</td>
-                        <td class="px-6 py-4 text-rose-600 font-medium">14 Jun 2026</td>
-                        <td class="px-6 py-4">
-                            <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-600/20">
-                                Perlu Review
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 ">
-                            <a href="/reviewer/naskah/1" class="inline-flex items-center justify-center  text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
-                                Lihat
-                            </a>
-                        </td>
-                    </tr>
+                    @if(isset($recent) && $recent->isNotEmpty())
+                        @foreach($recent as $naskah)
+                            @php $review = $naskah->activeReviewAssignment; @endphp
+                            <tr class="hover:bg-slate-50/50 transition-colors">
+                                <td class="px-6 py-4">
+                                    <div class="font-medium text-slate-900">{{ $naskah->title }}</div>
+                                    <div class="text-xs text-slate-500 mt-0.5">Oleh: {{ $naskah->user->name ?? '-' }}</div>
+                                </td>
+                                <td class="px-6 py-4 text-slate-600">
+                                    {{ $naskah->created_at ? $naskah->created_at->copy()->setTimezone('Asia/Jakarta')->locale('id')->translatedFormat('d M Y') : '-' }}
+                                </td>
+                                <td class="px-6 py-4 text-slate-600 font-medium">
+                                    {{ $naskah->created_at ? $naskah->created_at->addDays(14)->copy()->setTimezone('Asia/Jakarta')->locale('id')->translatedFormat('d M Y') : '-' }}
+                                </td>
+                                <td class="px-6 py-4">
+                                    @if($review && $review->reviewed_at)
+                                        <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-600/20">
+                                            Selesai Review
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-600/20">
+                                            Perlu Review
+                                        </span>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4">
+                                    <a href="{{ url('/reviewer/naskah/'.$naskah->id) }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-700">
+                                        Lihat
+                                    </a>
+                                </td>
+                            </tr>
+                        @endforeach
+                    @else
+                        <tr>
+                            <td colspan="5" class="px-6 py-4 text-sm text-slate-500 text-center">Belum ada tugas review.</td>
+                        </tr>
+                    @endif
                 </tbody>
             </table>
         </div>

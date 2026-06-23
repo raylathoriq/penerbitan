@@ -29,6 +29,14 @@ class AuthController extends Controller
         return view('auth.editor-login');
     }
 
+    public function editorRedirect()
+    {
+        if (Auth::check() && Auth::user()->role === 'editor') {
+            return redirect('/editor/dashboard');
+        }
+        return redirect('/editor/login');
+    }
+
     public function showRegister()
     {
         return view('auth.register');

@@ -21,9 +21,6 @@ class Naskah extends Model
         'title',
         'description',
         'co_author',
-        'document_name',
-        'document_path',
-        'document_size',
         'status',
         'submitted_at',
     ];
@@ -44,6 +41,77 @@ class Naskah extends Model
     public function getStatusLabelAttribute(): string
     {
         return ucwords(str_replace(['-', '_'], ' ', $this->status));
+    }
+
+    /**
+     * Get the files associated with this manuscript.
+     */
+    public function files()
+    {
+        return $this->hasMany(ManuscriptFile::class, 'id_naskah');
+    }
+
+    /**
+     * Get the reviews associated with this manuscript.
+     */
+    public function reviews()
+    {
+        return $this->hasMany(Review::class, 'id_naskah');
+    }
+
+    /**
+     * Get the latest original file submitted by the author.
+     */
+    public function originalFile()
+    {
+        return $this->files()
+            ->where('jenis_file', 'original')
+            ->orderByDesc('version')
+            ->first();
+    }
+
+    /**
+     * Get the latest reviewer feedback file (with corrections).
+     */
+    public function reviewerFile()
+    {
+        return $this->files()
+            ->where('jenis_file', 'reviewer_coretan')
+            ->orderByDesc('version')
+            ->first();
+    }
+
+    /**
+     * Get the latest revision file submitted by the author.
+     */
+    public function latestRevisionFile()
+    {
+        return $this->files()
+            ->where('jenis_file', 'revisi')
+            ->orderByDesc('version')
+            ->first();
+    }
+
+    /**
+     * Get the latest active file from the author (either revision or original).
+     */
+    public function latestAuthorFile()
+    {
+        return $this->files()
+            ->whereIn('jenis_file', ['original', 'revisi'])
+            ->orderByDesc('version')
+            ->first();
+    }
+
+    public function getActiveReviewAssignmentAttribute()
+    {
+        if ($this->relationLoaded('reviews')) {
+            return $this->reviews->where('id_user', auth()->id())->sortByDesc('created_at')->first();
+        }
+        return $this->reviews()
+            ->where('id_user', auth()->id())
+            ->latest()
+            ->first();
     }
 
     /**

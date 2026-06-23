@@ -49,20 +49,95 @@
 
                 <div class="mt-8 border-t border-slate-100 pt-6">
                     <h4 class="text-sm font-semibold text-slate-900 mb-3">Dokumen Naskah</h4>
-                    @if($naskah->document_path)
-                        <a href="{{ asset('storage/' . $naskah->document_path) }}" target="_blank" class="inline-flex items-center p-3 border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-colors group">
-                            <div class="bg-rose-100 text-rose-600 p-2 rounded mr-3">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
-                            </div>
-                            <div>
-                                <p class="text-sm font-medium text-slate-900 group-hover:text-emerald-700 transition-colors">{{ $naskah->document_name ?? 'Dokumen tidak tersedia' }}</p>
-                                <p class="text-xs text-slate-500">{{ $naskah->document_size ?? '-' }}</p>
-                            </div>
-                        </a>
+                    @php $authorFiles = $naskah->files()->whereIn('jenis_file', ['original', 'revisi'])->orderBy('version')->get(); @endphp
+                    @if($authorFiles->isNotEmpty())
+                        <div class="space-y-3">
+                            @foreach($authorFiles as $file)
+                                <div class="flex items-center gap-3">
+                                    <a href="{{ asset('storage/' . $file->file_path) }}" target="_blank" class="inline-flex items-center p-3 border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-colors group">
+                                        <div class="bg-rose-100 text-rose-600 p-2 rounded mr-3">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-slate-900 group-hover:text-emerald-700 transition-colors">{{ $file->file_name }}</p>
+                                            @if($file->file_size)
+                                                <p class="text-xs text-slate-500 mt-1">{{ round($file->file_size / 1024, 1) }} KB</p>
+                                            @endif
+                                        </div>
+                                    </a>
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded text-xs font-medium bg-slate-100 text-slate-800 border border-slate-200">
+                                        {{ $file->jenis_file === 'revisi' ? 'Revisi (v' . $file->version . ')' : 'Asli (v1)' }}
+                                    </span>
+                                </div>
+                            @endforeach
+                        </div>
                     @else
-                        <p class="text-sm text-slate-500">File tidak tersedia.</p>
+                        <p class="text-sm text-slate-500">Berkas belum diunggah.</p>
                     @endif
                 </div>
+
+                {{-- Hasil Evaluasi Reviewer --}}
+                @if($naskah->reviews->isNotEmpty())
+                    <div class="mt-8 border-t border-slate-100 pt-6">
+                        <h4 class="text-sm font-semibold text-slate-900 mb-4">Hasil Evaluasi Reviewer</h4>
+                        <div class="space-y-4">
+                            @foreach($naskah->reviews as $review)
+                                <div class="bg-slate-50/50 border border-slate-200/60 rounded-xl p-5">
+                                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-3">
+                                        <div>
+                                            <span class="font-semibold text-slate-900 text-sm block sm:inline">{{ $review->reviewer->name ?? '-' }}</span>
+                                            @if($review->reviewed_at)
+                                                <span class="text-xs text-slate-400 sm:ml-2">Selesai pada: {{ $review->reviewed_at->copy()->setTimezone('Asia/Jakarta')->locale('id')->translatedFormat('d F Y H:i') }} WIB</span>
+                                            @else
+                                                <span class="text-xs text-slate-400 sm:ml-2">Dalam proses review</span>
+                                            @endif
+                                        </div>
+                                        @if($review->decision)
+                                            <span class="self-start sm:self-auto inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold
+                                                @if($review->decision === 'diterima') bg-emerald-100 text-emerald-800
+                                                @elseif($review->decision === 'revisi') bg-amber-100 text-amber-800
+                                                @else bg-rose-100 text-rose-800
+                                                @endif">
+                                                {{ ucfirst($review->decision) }}
+                                            </span>
+                                        @else
+                                            <span class="self-start sm:self-auto inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-100 text-slate-600">
+                                                Menunggu Review
+                                            </span>
+                                        @endif
+                                    </div>
+                                    
+                                    @if($review->assignment_note)
+                                        <div class="mb-3 text-xs text-indigo-700 bg-indigo-50 border border-indigo-100/50 rounded-lg p-2.5">
+                                            <strong>Instruksi Admin:</strong> "{{ $review->assignment_note }}"
+                                        </div>
+                                    @endif
+
+                                    @if($review->comments)
+                                        <div class="text-sm text-slate-700 whitespace-pre-line bg-white border border-slate-200 rounded-lg p-3.5 mb-3">
+                                            {{ $review->comments }}
+                                        </div>
+                                    @endif
+
+                                    @if($review->reviewed_at)
+                                        @php $reviewerFile = $naskah->reviewerFile(); @endphp
+                                        @if($reviewerFile)
+                                            <div class="flex items-center text-xs">
+                                                <span class="text-slate-400 mr-2">File Koreksi:</span>
+                                                <a href="{{ asset('storage/' . $reviewerFile->file_path) }}" target="_blank" class="inline-flex items-center font-medium text-indigo-600 hover:text-indigo-700 transition-colors">
+                                                    <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                                                    {{ $reviewerFile->file_name }}
+                                                </a>
+                                            </div>
+                                        @else
+                                            <span class="text-xs text-slate-400">Tidak ada file coretan yang diunggah.</span>
+                                        @endif
+                                    @endif
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
             </x-card>
         </div>
 

@@ -13,7 +13,7 @@
         <div class="text-4xl font-bold text-amber-900 mt-3 tracking-tight">{{ $inReview }}</div>
     </x-card>
     <x-card class="border-l-4 border-l-emerald-400">
-        <div class="text-emerald-600 text-sm font-medium tracking-wide">Selesai/Terbit</div>
+        <div class="text-emerald-600 text-sm font-medium tracking-wide">Diterima</div>
         <div class="text-4xl font-bold text-emerald-900 mt-3 tracking-tight">{{ $published }}</div>
     </x-card>
 </div>
