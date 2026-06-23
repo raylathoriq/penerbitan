@@ -10,6 +10,20 @@ use Illuminate\Http\Request;
 class NaskahController extends Controller
 {
     /**
+     * Display the Admin dashboard with statistics.
+     */
+    public function dashboard()
+    {
+        $total = Naskah::count();
+        $inReview = Naskah::where('status', 'dalam review')->count();
+        $published = Naskah::where('status', 'diterima')->count();
+        $rejected = Naskah::where('status', 'ditolak')->count();
+        $recent = Naskah::with('user')->orderByDesc('submitted_at')->limit(5)->get();
+
+        return view('admin.dashboard', compact('total', 'inReview', 'published', 'rejected', 'recent'));
+    }
+
+    /**
      * Display a listing of all submissions for Admin with search and status filtering.
      */
     public function index(Request $request)
@@ -39,7 +53,7 @@ class NaskahController extends Controller
 
     public function show(int $id)
     {
-        $naskah = Naskah::with(['user', 'category', 'package', 'reviewer'])->findOrFail($id);
+        $naskah = Naskah::with(['user', 'category', 'package', 'reviewer', 'reviews.reviewer', 'files'])->findOrFail($id);
         $reviewers = User::where('role', 'reviewer')->get();
 
         return view('admin.naskah.detail', compact('naskah', 'reviewers'));
@@ -63,6 +77,7 @@ class NaskahController extends Controller
     {
         $request->validate([
             'reviewer_id' => 'required|exists:users,id',
+            'note' => 'nullable|string',
         ]);
 
         $naskah = Naskah::findOrFail($id);
@@ -72,6 +87,12 @@ class NaskahController extends Controller
         $naskah->reviewer_name = $reviewer->name;
         $naskah->status = 'dalam review';
         $naskah->save();
+
+        // Create record in reviews table
+        $naskah->reviews()->create([
+            'id_user' => $reviewer->id,
+            'assignment_note' => $request->note,
+        ]);
 
         return redirect()->route('admin.naskah.show', $naskah->id)
             ->with('success', 'Naskah berhasil ditugaskan ke reviewer.');
