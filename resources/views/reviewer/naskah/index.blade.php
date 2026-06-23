@@ -22,40 +22,35 @@
                 </tr>
             </thead>
             <tbody class="divide-y divide-slate-100">
-                <tr class="hover:bg-slate-50/50 transition-colors">
-                    <td class="px-6 py-4">
-                        <div class="font-medium text-slate-900">Dasar Logika Matematika</div>
-                    </td>
-                    <td class="px-6 py-4 text-slate-600 max-w-xs truncate">
-                        Mohon perhatikan bagian metodologi...
-                    </td>
-                    <td class="px-6 py-4">
-                        <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-600/20">
-                            Sedang Berjalan
-                        </span>
-                    </td>
-                    <td class="px-6 py-4 text-slate-600">-</td>
-                    <td class="px-6 py-4 ">
-                        <a href="/reviewer/naskah/1" class="text-sm font-medium text-indigo-600 hover:text-indigo-700">Mulai Review</a>
-                    </td>
-                </tr>
-                <tr class="hover:bg-slate-50/50 transition-colors">
-                    <td class="px-6 py-4">
-                        <div class="font-medium text-slate-900">Pengantar Ilmu Komunikasi</div>
-                    </td>
-                    <td class="px-6 py-4 text-slate-600 max-w-xs truncate">
-                        -
-                    </td>
-                    <td class="px-6 py-4">
-                        <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-600/20">
-                            Selesai Review
-                        </span>
-                    </td>
-                    <td class="px-6 py-4 text-slate-600">20 Mei 2026</td>
-                    <td class="px-6 py-4 ">
-                        <a href="#" class="text-sm font-medium text-indigo-600 hover:text-indigo-700">Lihat Hasil</a>
-                    </td>
-                </tr>
+                @if(isset($assignments) && $assignments->count())
+                    @foreach($assignments as $naskah)
+                        <tr class="hover:bg-slate-50/50 transition-colors">
+                            <td class="px-6 py-4">
+                                <div class="font-medium text-slate-900">{{ $naskah->title }}</div>
+                                <div class="text-xs text-slate-500 mt-0.5">Oleh: {{ $naskah->author_name }}</div>
+                            </td>
+                            <td class="px-6 py-4 text-slate-600 max-w-xs truncate">
+                                {{-- no instruksi field saved currently --}}
+                                -
+                            </td>
+                            <td class="px-6 py-4">
+                                @if($naskah->status === 'dalam review')
+                                    <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-600/20">Perlu Review</span>
+                                @else
+                                    <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-600/20">Selesai Review</span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4 text-slate-600">{{ $naskah->updated_at ? $naskah->updated_at->copy()->setTimezone('Asia/Jakarta')->locale('id')->translatedFormat('d F Y') : '-' }}</td>
+                            <td class="px-6 py-4 ">
+                                <a href="{{ url('/reviewer/naskah/'.$naskah->id) }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-700">Mulai Review</a>
+                            </td>
+                        </tr>
+                    @endforeach
+                @else
+                    <tr>
+                        <td colspan="5" class="px-6 py-4 text-sm text-slate-500 text-center">Belum ada tugas review.</td>
+                    </tr>
+                @endif
             </tbody>
         </table>
     </div>

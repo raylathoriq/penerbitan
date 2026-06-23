@@ -16,6 +16,8 @@ class Naskah extends Model
         'author_id',
         'category_id',
         'package_id',
+        'reviewer_id',
+        'reviewer_name',
         'title',
         'description',
         'co_author',
@@ -58,6 +60,14 @@ class Naskah extends Model
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'author_id');
+    }
+
+    /**
+     * Get the user (reviewer) assigned to review this manuscript.
+     */
+    public function reviewer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'reviewer_id');
     }
 
     /**
