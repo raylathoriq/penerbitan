@@ -70,6 +70,35 @@
                     @endif
                 </div>
 
+                {{-- Hasil Penyuntingan Editor --}}
+                @php $editorFile = $naskah->editorFile(); @endphp
+                @if($editorFile)
+                    <div class="mt-6 border-t border-slate-100 pt-5">
+                        <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Berkas Hasil Penyuntingan Editor</h4>
+                        <div class="flex items-center gap-3">
+                            <a href="{{ asset('storage/' . $editorFile->file_path) }}" target="_blank" class="inline-flex items-center px-4 py-2 border border-emerald-200 shadow-sm rounded-lg text-sm text-emerald-800 bg-emerald-50 hover:bg-emerald-100 transition-colors">
+                                <svg class="h-4 w-4 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0"></path></svg>
+                                {{ $editorFile->file_name }} (v{{ $editorFile->version }})
+                            </a>
+                            <span class="text-xs text-slate-500">Unduh berkas final hasil penyuntingan editor.</span>
+                        </div>
+                    </div>
+                @endif
+
+                @php $coverFile = $naskah->editorCoverFile(); @endphp
+                @if($coverFile)
+                    <div class="mt-4 pt-4 border-t border-slate-100">
+                        <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Cover Buku (Editor)</h4>
+                        <div class="flex items-center gap-3">
+                            <a href="{{ asset('storage/' . $coverFile->file_path) }}" target="_blank" class="inline-flex items-center px-4 py-2 border border-indigo-200 shadow-sm rounded-lg text-sm text-indigo-800 bg-indigo-50 hover:bg-indigo-100 transition-colors">
+                                <svg class="h-4 w-4 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                {{ $coverFile->file_name }}
+                            </a>
+                            <span class="text-xs text-slate-500">Unduh berkas gambar cover/sampul buku Anda.</span>
+                        </div>
+                    </div>
+                @endif
+
                 {{-- Hasil Evaluasi Reviewer --}}
                 @if($naskah->reviews->isNotEmpty())
                     <div class="mt-8 border-t border-slate-100 pt-6">
@@ -80,7 +109,13 @@
                                     <div class="bg-slate-50/50 border border-slate-200/60 rounded-xl p-5">
                                         <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-3">
                                             <div>
-                                                <span class="font-semibold text-slate-900 text-sm">Reviewer</span>
+                                                <span class="font-semibold text-slate-900 text-sm">
+                                                    @if($review->reviewer && $review->reviewer->role === 'admin')
+                                                        Redaksi (Admin)
+                                                    @else
+                                                        Reviewer ({{ $review->reviewer->name ?? 'Pakar' }})
+                                                    @endif
+                                                </span>
                                                 <span class="text-xs text-slate-400 sm:ml-2">Selesai pada: {{ $review->reviewed_at->copy()->setTimezone('Asia/Jakarta')->locale('id')->translatedFormat('d F Y H:i') }} WIB</span>
                                             </div>
                                             <span class="self-start sm:self-auto inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold
@@ -116,6 +151,44 @@
                 @endif
             </div>
         </x-card>
+
+        @php
+            $latestEditorLog = $naskah->editorLogs()->latest()->first();
+            $needsAuthorConfirmation = ($naskah->status === 'editing' && $latestEditorLog && $latestEditorLog->decision === 'perlu_cek');
+        @endphp
+        @if($needsAuthorConfirmation)
+            <x-card class="mt-6 border border-amber-200 bg-amber-50/10">
+                <h3 class="text-lg font-semibold text-amber-900 mb-1">Konfirmasi Catatan Editor</h3>
+                <p class="text-sm text-slate-600 mb-4">Editor sedang menunggu konfirmasi atau revisi Anda. Harap berikan catatan penjelasan dan/atau unggah berkas revisi di bawah ini.</p>
+                
+                @if ($errors->any())
+                    <div class="mb-4 p-3.5 bg-rose-50 border border-rose-100 rounded-lg text-xs text-rose-600">
+                        <ul class="list-disc pl-4 space-y-1">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                <form action="{{ route('author.naskah.confirmEditor', $naskah->id) }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+                    @csrf
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Catatan Balasan <span class="text-rose-500">*</span></label>
+                        <textarea name="notes" rows="3" required class="block w-full border border-slate-200 rounded-lg text-sm p-3 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm" placeholder="Tulis balasan konfirmasi Anda di sini..."></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Unggah Berkas Revisi Baru (Opsional)</label>
+                        <input type="file" name="revision_file" accept=".pdf,.doc,.docx" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 transition-colors cursor-pointer">
+                    </div>
+                    <div class="flex justify-end pt-2">
+                        <button type="submit" class="inline-flex justify-center rounded-lg bg-emerald-700 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-800 transition-colors">
+                            Kirim Balasan ke Editor
+                        </button>
+                    </div>
+                </form>
+            </x-card>
+        @endif
     </div>    <div class="lg:col-span-1">
         <x-card class="bg-slate-50/50">
             <x-slot name="header">
@@ -138,44 +211,76 @@
 
                 // 2. Events from reviews
                 foreach ($naskah->reviews as $review) {
-                    // Assignment Event
-                    if ($review->created_at) {
+                    $user = $review->reviewer;
+                    if (!$user) continue;
+
+                    if ($user->role === 'admin') {
+                        // Admin decision/note event
                         $events->push([
-                            'title' => 'Ditugaskan ke Reviewer',
+                            'title' => 'Catatan Redaksi',
                             'date' => $review->created_at,
-                            'description' => 'Naskah ditugaskan kepada ' . ($review->reviewer->name ?? 'Reviewer') . ' oleh Redaksi.',
-                            'color' => 'bg-indigo-500',
-                            'icon' => 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'
+                            'description' => $review->comments ? '"' . $review->comments . '" (Status: ' . $naskah->status_label . ')' : 'Admin memperbarui status naskah.',
+                            'color' => 'bg-slate-600',
+                            'icon' => 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2'
                         ]);
-                    }
-
-                    // Review Completed Event
-                    if ($review->reviewed_at && $review->decision) {
-                        $title = 'Review Selesai: ' . ucwords($review->decision);
-                        $desc = 'Reviewer memberikan penilaian dengan keputusan: ' . ucwords($review->decision) . '.';
-                        $color = 'bg-blue-500';
-                        if ($review->decision === 'diterima') {
-                            $color = 'bg-emerald-500';
-                            $icon = 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0';
-                        } elseif ($review->decision === 'revisi') {
-                            $color = 'bg-amber-500';
-                            $icon = 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z';
+                    } elseif ($user->role === 'reviewer') {
+                        // Reviewer Assignment or Review Completed
+                        if (!$review->reviewed_at) {
+                            $events->push([
+                                'title' => 'Ditugaskan ke Reviewer',
+                                'date' => $review->created_at,
+                                'description' => 'Naskah ditugaskan kepada ' . $user->name . ' oleh Redaksi.',
+                                'color' => 'bg-indigo-500',
+                                'icon' => 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'
+                            ]);
                         } else {
-                            $color = 'bg-rose-500';
-                            $icon = 'M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0';
-                        }
+                            $title = 'Review Selesai: ' . ucwords($review->decision);
+                            $desc = 'Reviewer ' . $user->name . ' memberikan penilaian dengan catatan: "' . $review->comments . '".';
+                            $color = 'bg-blue-500';
+                            if ($review->decision === 'diterima') {
+                                $color = 'bg-emerald-500';
+                                $icon = 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0';
+                            } elseif ($review->decision === 'revisi') {
+                                $color = 'bg-amber-500';
+                                $icon = 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z';
+                            } else {
+                                $color = 'bg-rose-500';
+                                $icon = 'M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0';
+                            }
 
-                        $events->push([
-                            'title' => $title,
-                            'date' => $review->reviewed_at,
-                            'description' => $desc,
-                            'color' => $color,
-                            'icon' => $icon
-                        ]);
+                            $events->push([
+                                'title' => $title,
+                                'date' => $review->reviewed_at,
+                                'description' => $desc,
+                                'color' => $color,
+                                'icon' => $icon
+                            ]);
+                        }
                     }
                 }
 
-                // 3. Events from uploaded files (revisions)
+                // 3. Events from editorLogs
+                foreach ($naskah->editorLogs as $log) {
+                    $user = $log->editor;
+                    if (!$user) continue;
+
+                    $statusText = [
+                        'perlu_edit' => 'Ditugaskan ke Editor',
+                        'draft' => 'Draft Disimpan',
+                        'perlu_cek' => 'Perlu Konfirmasi Author',
+                        'siap_dikirim' => 'Selesai Disunting (Siap Terbit)',
+                    ][$log->decision] ?? $log->decision;
+
+                    $events->push([
+                        'title' => 'Penyuntingan Editor: ' . $statusText,
+                        'date' => $log->tanggal_edit ?? $log->created_at,
+                        'description' => 'Editor ' . $user->name . ' memberikan catatan: "' . $log->comments . '"',
+                        'color' => 'bg-teal-600',
+                        'icon' => 'M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z'
+                    ]);
+                }
+
+                // 4. Events from uploaded files (revisions)
                 $revisions = $naskah->files()->where('jenis_file', 'revisi')->get();
                 foreach ($revisions as $revFile) {
                     $events->push([

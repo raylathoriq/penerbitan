@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\NaskahController;
 use App\Http\Controllers\Author\NaskahController as AuthorNaskahController;
 use App\Http\Controllers\Reviewer\NaskahController as ReviewerNaskahController;
+use App\Http\Controllers\Editor\NaskahController as EditorNaskahController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PackageController;
@@ -43,9 +44,10 @@ Route::prefix('editor')->group(function () {
 
 // Editor Protected Panel
 Route::prefix('editor')->middleware('auth')->group(function () {
-    Route::view('/dashboard', 'editor.dashboard');
-    Route::view('/naskah', 'editor.naskah.index');
-    Route::view('/naskah/{id}', 'editor.naskah.detail');
+    Route::get('/dashboard', [EditorNaskahController::class, 'dashboard'])->name('editor.dashboard');
+    Route::get('/naskah', [EditorNaskahController::class, 'index'])->name('editor.naskah.index');
+    Route::get('/naskah/{id}', [EditorNaskahController::class, 'show'])->name('editor.naskah.show');
+    Route::post('/naskah/{id}/submit-edit', [EditorNaskahController::class, 'submitEdit'])->name('editor.naskah.submitEdit');
 });
 
 // Admin Protected Panel
@@ -56,6 +58,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/naskah/{id}', [NaskahController::class, 'show'])->name('admin.naskah.show');
     Route::put('/naskah/{id}', [NaskahController::class, 'update'])->name('admin.naskah.update');
     Route::post('/naskah/{id}/assign-reviewer', [NaskahController::class, 'assignReviewer'])->name('admin.naskah.assignReviewer');
+    Route::post('/naskah/{id}/assign-editor', [NaskahController::class, 'assignEditor'])->name('admin.naskah.assignEditor');
     Route::view('/publication', 'admin.publication.form');
     
     // Kategori
@@ -88,6 +91,7 @@ Route::prefix('author')->middleware('auth')->group(function () {
     Route::get('/naskah/{id}', [AuthorNaskahController::class, 'show'])->name('author.naskah.show');
     Route::get('/revisi/{id}', [AuthorNaskahController::class, 'revisi'])->name('author.naskah.revisi');
     Route::post('/revisi/{id}', [AuthorNaskahController::class, 'storeRevisi'])->name('author.naskah.storeRevisi');
+    Route::post('/naskah/{id}/confirm-editor', [AuthorNaskahController::class, 'confirmEditor'])->name('author.naskah.confirmEditor');
     Route::view('/profil', 'author.profil');
 });
 

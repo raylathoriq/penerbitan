@@ -53,24 +53,35 @@ class NaskahController extends Controller
 
     public function show(int $id)
     {
-        $naskah = Naskah::with(['user', 'category', 'package', 'reviewer', 'reviews.reviewer', 'files'])->findOrFail($id);
+        $naskah = Naskah::with(['user', 'category', 'package', 'reviewer', 'editor', 'reviews.reviewer', 'editorLogs.editor', 'files'])->findOrFail($id);
         $reviewers = User::where('role', 'reviewer')->get();
+        $editors = User::where('role', 'editor')->get();
 
-        return view('admin.naskah.detail', compact('naskah', 'reviewers'));
+        return view('admin.naskah.detail', compact('naskah', 'reviewers', 'editors'));
     }
 
     public function update(Request $request, int $id)
     {
         $request->validate([
-            'status' => 'required|string|in:diajukan,dalam review,revisi,diterima,ditolak',
+            'status' => 'required|string|in:diajukan,dalam review,revisi,diterima,ditolak,pengajuan_isbn,perlu_edit,editing,selesai',
+            'note' => 'nullable|string',
         ]);
 
         $naskah = Naskah::findOrFail($id);
         $naskah->status = $request->status;
         $naskah->save();
 
+        if ($request->filled('note')) {
+            $naskah->reviews()->create([
+                'id_user' => auth()->id(), // Admin's User ID
+                'comments' => $request->note,
+                'decision' => $request->status,
+                'reviewed_at' => now(),
+            ]);
+        }
+
         return redirect()->route('admin.naskah.show', $naskah->id)
-            ->with('success', 'Status naskah berhasil diubah.');
+            ->with('success', 'Status naskah dan catatan berhasil disimpan.');
     }
 
     public function assignReviewer(Request $request, int $id)
@@ -84,7 +95,6 @@ class NaskahController extends Controller
         $reviewer = User::where('id', $request->reviewer_id)->where('role', 'reviewer')->firstOrFail();
 
         $naskah->reviewer_id = $reviewer->id;
-        $naskah->reviewer_name = $reviewer->name;
         $naskah->status = 'dalam review';
         $naskah->save();
 
@@ -96,5 +106,31 @@ class NaskahController extends Controller
 
         return redirect()->route('admin.naskah.show', $naskah->id)
             ->with('success', 'Naskah berhasil ditugaskan ke reviewer.');
+    }
+
+    public function assignEditor(Request $request, int $id)
+    {
+        $request->validate([
+            'editor_id' => 'required|exists:users,id',
+            'note' => 'nullable|string',
+        ]);
+
+        $naskah = Naskah::findOrFail($id);
+        $editor = User::where('id', $request->editor_id)->where('role', 'editor')->firstOrFail();
+
+        $naskah->editor_id = $editor->id;
+        $naskah->status = 'perlu_edit';
+        $naskah->save();
+
+        // Create initial assignment record in editor_log table
+        $naskah->editorLogs()->create([
+            'id_user' => $editor->id,
+            'comments' => $request->note,
+            'decision' => 'perlu_edit', // Set as 'perlu_edit' to represent the assign event
+            'tanggal_edit' => now(),
+        ]);
+
+        return redirect()->route('admin.naskah.show', $naskah->id)
+            ->with('success', 'Naskah berhasil ditugaskan ke editor.');
     }
 }

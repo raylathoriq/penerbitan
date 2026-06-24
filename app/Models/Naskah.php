@@ -17,7 +17,7 @@ class Naskah extends Model
         'category_id',
         'package_id',
         'reviewer_id',
-        'reviewer_name',
+        'editor_id',
         'title',
         'description',
         'co_author',
@@ -40,7 +40,19 @@ class Naskah extends Model
      */
     public function getStatusLabelAttribute(): string
     {
-        return ucwords(str_replace(['-', '_'], ' ', $this->status));
+        $labels = [
+            'diajukan' => 'Diajukan',
+            'dalam review' => 'Dalam Review',
+            'revisi' => 'Revisi',
+            'diterima' => 'Diterima',
+            'ditolak' => 'Ditolak',
+            'pengajuan_isbn' => 'Pengajuan ISBN',
+            'perlu_edit' => 'Menunggu Edit',
+            'editing' => 'Sedang Disunting',
+            'selesai' => 'Selesai Disunting',
+        ];
+
+        return $labels[$this->status] ?? ucwords(str_replace(['-', '_'], ' ', $this->status));
     }
 
     /**
@@ -57,6 +69,14 @@ class Naskah extends Model
     public function reviews()
     {
         return $this->hasMany(Review::class, 'id_naskah');
+    }
+
+    /**
+     * Get the editor logs associated with this manuscript.
+     */
+    public function editorLogs()
+    {
+        return $this->hasMany(EditorLog::class, 'id_naskah');
     }
 
     /**
@@ -103,6 +123,28 @@ class Naskah extends Model
             ->first();
     }
 
+    /**
+     * Get the latest editor file submitted by the editor.
+     */
+    public function editorFile()
+    {
+        return $this->files()
+            ->where('jenis_file', 'editor_editing')
+            ->orderByDesc('version')
+            ->first();
+    }
+
+    /**
+     * Get the latest cover file submitted by the editor.
+     */
+    public function editorCoverFile()
+    {
+        return $this->files()
+            ->where('jenis_file', 'cover')
+            ->orderByDesc('version')
+            ->first();
+    }
+
     public function getActiveReviewAssignmentAttribute()
     {
         if ($this->relationLoaded('reviews')) {
@@ -136,6 +178,14 @@ class Naskah extends Model
     public function reviewer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'reviewer_id');
+    }
+
+    /**
+     * Get the user (editor) assigned to edit this manuscript.
+     */
+    public function editor(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'editor_id');
     }
 
     /**
