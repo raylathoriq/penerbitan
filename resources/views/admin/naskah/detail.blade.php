@@ -13,7 +13,7 @@
         </a>
     </div>
 
-    <div x-data="{ showStatusModal: false, showReviewerModal: false }" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div x-data="{ showStatusModal: false, showReviewerModal: false, showEditorModal: false }" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div class="lg:col-span-2 space-y-6">
             <x-card>
                 <div class="flex justify-between items-start mb-6">
@@ -74,6 +74,44 @@
                     @else
                         <p class="text-sm text-slate-500">Berkas belum diunggah.</p>
                     @endif
+
+                    @php $coverFile = $naskah->editorCoverFile(); @endphp
+                    @if($coverFile)
+                        <div class="mt-4 pt-4 border-t border-slate-100">
+                            <h5 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Cover Buku (Editor)</h5>
+                            <div class="flex items-center gap-3">
+                                <a href="{{ asset('storage/' . $coverFile->file_path) }}" target="_blank" class="inline-flex items-center p-3 border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-colors group">
+                                    <div class="bg-indigo-100 text-indigo-600 p-2 rounded mr-3">
+                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-slate-900 group-hover:text-emerald-700 transition-colors">{{ $coverFile->file_name }}</p>
+                                        @if($coverFile->file_size)
+                                            <p class="text-xs text-slate-500 mt-1">{{ round($coverFile->file_size / 1024, 1) }} KB</p>
+                                        @endif
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    @endif
+
+                    @php $editorFile = $naskah->editorFile(); @endphp
+                    @if($editorFile)
+                        <div class="mt-4 pt-4 border-t border-slate-100">
+                            <h5 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Hasil Suntingan Editor</h5>
+                            <div class="flex items-center gap-3">
+                                <a href="{{ asset('storage/' . $editorFile->file_path) }}" target="_blank" class="inline-flex items-center p-3 border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-colors group">
+                                    <div class="bg-teal-100 text-teal-600 p-2 rounded mr-3">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0" /></svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-slate-900 group-hover:text-emerald-700 transition-colors">{{ $editorFile->file_name }}</p>
+                                        <p class="text-xs text-slate-500 mt-1">v{{ $editorFile->version }} @if($editorFile->file_size)· {{ round($editorFile->file_size / 1024, 1) }} KB @endif</p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    @endif
                 </div>
 
                 {{-- Hasil Evaluasi Reviewer --}}
@@ -85,7 +123,12 @@
                                 <div class="bg-slate-50/50 border border-slate-200/60 rounded-xl p-5">
                                     <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-3">
                                         <div>
-                                            <span class="font-semibold text-slate-900 text-sm block sm:inline">{{ $review->reviewer->name ?? '-' }}</span>
+                                            <span class="font-semibold text-slate-900 text-sm block sm:inline">
+                                                {{ $review->reviewer->name ?? '-' }}
+                                                @if($review->reviewer && $review->reviewer->role === 'admin')
+                                                    <span class="text-[10px] font-medium text-slate-600 bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded ml-1">Redaksi (Admin)</span>
+                                                @endif
+                                            </span>
                                             @if($review->reviewed_at)
                                                 <span class="text-xs text-slate-400 sm:ml-2">Selesai pada: {{ $review->reviewed_at->copy()->setTimezone('Asia/Jakarta')->locale('id')->translatedFormat('d F Y H:i') }} WIB</span>
                                             @else
@@ -138,6 +181,41 @@
                         </div>
                     </div>
                 @endif
+
+                {{-- Riwayat Penyuntingan Editor --}}
+                @if($naskah->editorLogs->isNotEmpty())
+                    <div class="mt-8 border-t border-slate-100 pt-6">
+                        <h4 class="text-sm font-semibold text-slate-900 mb-4">Umpan Balik / Catatan Penyuntingan Editor</h4>
+                        <div class="space-y-4">
+                            @foreach($naskah->editorLogs as $log)
+                                <div class="bg-slate-50/50 border border-slate-200/60 rounded-xl p-5">
+                                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-3">
+                                        <div>
+                                            <span class="font-semibold text-slate-900 text-sm block sm:inline">
+                                                {{ $log->editor->name ?? '-' }} (Penyunting/Editor)
+                                            </span>
+                                            <span class="text-xs text-slate-400 sm:ml-2">Selesai pada: {{ $log->tanggal_edit->copy()->setTimezone('Asia/Jakarta')->locale('id')->translatedFormat('d F Y H:i') }} WIB</span>
+                                        </div>
+                                        <span class="self-start sm:self-auto inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-teal-100 text-teal-800">
+                                            {{ [
+                                                'perlu_edit' => 'Ditugaskan ke Editor',
+                                                'draft' => 'Draft Disimpan',
+                                                'perlu_cek' => 'Perlu Cek Author',
+                                                'siap_dikirim' => 'Siap Dikirim / Selesai',
+                                            ][$log->decision] ?? $log->decision }}
+                                        </span>
+                                    </div>
+
+                                    @if($log->comments)
+                                        <div class="text-sm text-slate-700 whitespace-pre-line bg-white border border-slate-200 rounded-lg p-3.5 mb-3 leading-relaxed">
+                                            {{ $log->comments }}
+                                        </div>
+                                    @endif
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
             </x-card>
         </div>
 
@@ -155,6 +233,12 @@
                         Kirim ke Reviewer
                     </button>
 
+                    <button type="button" @click="showEditorModal = true"
+                        {{ ($naskah->status !== 'diterima' && $naskah->status !== 'pengajuan_isbn') ? 'disabled' : '' }}
+                        class="w-full relative flex justify-center py-2.5 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-teal-600 hover:bg-teal-700 shadow-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:hover:bg-slate-300">
+                        Kirim ke Editor
+                    </button>
+
                     <button type="button" @click="showStatusModal = true"
                         class="w-full relative flex justify-center py-2.5 px-4 border border-slate-300 text-sm font-medium rounded-lg text-slate-700 bg-white hover:bg-slate-50 shadow-sm transition-colors">
                         Ubah Status Naskah
@@ -164,7 +248,16 @@
                         <div class="mt-4 pt-4 border-t border-slate-100 text-sm">
                             <span class="text-slate-400 font-semibold text-xs uppercase tracking-wider block mb-1">Reviewer Ditugaskan</span>
                             <div class="font-medium text-slate-800">
-                                {{ $naskah->reviewer->name ?? $naskah->reviewer_name }}
+                                {{ $naskah->reviewer->name ?? '-' }}
+                            </div>
+                        </div>
+                    @endif
+
+                    @if($naskah->editor_id)
+                        <div class="mt-4 pt-4 border-t border-slate-100 text-sm">
+                            <span class="text-slate-400 font-semibold text-xs uppercase tracking-wider block mb-1">Editor Ditugaskan</span>
+                            <div class="font-medium text-slate-800">
+                                {{ $naskah->editor->name ?? '-' }}
                             </div>
                         </div>
                     @endif
@@ -235,8 +328,9 @@
                                                 <select name="status" class="block w-full border border-slate-200 rounded-lg text-sm py-2 px-3 focus:ring-emerald-500 focus:border-emerald-500">
                                                     <option disabled {{ $naskah->status ? '' : 'selected' }}>-- Pilih Keputusan --</option>
                                                     <option value="revisi" {{ $naskah->status === 'revisi' ? 'selected' : '' }}>Butuh Revisi (Kembalikan ke Penulis)</option>
-                                                    <option value="diterima" {{ $naskah->status === 'diterima' ? 'selected' : '' }}>Diterima (Lanjut Publikasi)</option>
+                                                    <option value="diterima" {{ $naskah->status === 'diterima' ? 'selected' : '' }}>Diterima (Proses Awal)</option>
                                                     <option value="ditolak" {{ $naskah->status === 'ditolak' ? 'selected' : '' }}>Ditolak (Naskah Invalid)</option>
+                                                    <option value="pengajuan_isbn" {{ $naskah->status === 'pengajuan_isbn' ? 'selected' : '' }}>Sedang dalam Pengajuan ISBN</option>
                                                 </select>
                                             </div>
                                             <div>
@@ -250,6 +344,49 @@
                             <div class="bg-slate-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 border-t border-slate-100">
                                 <button type="submit" class="inline-flex w-full justify-center rounded-lg bg-emerald-700 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-800 sm:ml-3 sm:w-auto">Simpan Keputusan</button>
                                 <button type="button" @click="showStatusModal = false" class="mt-3 inline-flex w-full justify-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50 sm:mt-0 sm:w-auto">Batal</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Modal Kirim ke Editor --}}
+        <div x-show="showEditorModal" style="display: none;" class="relative z-50" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <div x-show="showEditorModal" x-transition.opacity class="fixed inset-0 bg-slate-900/75 transition-opacity"></div>
+            <div class="fixed inset-0 z-10 overflow-y-auto">
+                <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+                    <div x-show="showEditorModal" x-transition.opacity @click.away="showEditorModal = false"
+                        class="relative transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                        <form action="{{ route('admin.naskah.assignEditor', $naskah->id) }}" method="POST">
+                            @csrf
+                            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                                <div class="sm:flex sm:items-start">
+                                    <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
+                                        <h3 class="text-lg leading-6 font-semibold text-slate-900" id="modal-title">Kirim Naskah ke Editor</h3>
+                                        <div class="mt-4 space-y-4">
+                                            <div>
+                                                <label class="block text-sm font-medium text-slate-700 mb-1">Pilih Editor</label>
+                                                <select name="editor_id" class="block w-full border border-slate-200 rounded-lg text-sm py-2 px-3 focus:ring-emerald-500 focus:border-emerald-500" required>
+                                                    <option disabled selected>-- Pilih Editor --</option>
+                                                    @foreach($editors as $editor)
+                                                        <option value="{{ $editor->id }}" {{ $naskah->editor_id === $editor->id ? 'selected' : '' }}>
+                                                            {{ $editor->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-slate-700 mb-1">Catatan/Instruksi untuk Editor (Opsional)</label>
+                                                <textarea name="note" rows="4" class="block w-full border border-slate-200 rounded-lg text-sm p-3 focus:ring-emerald-500 focus:border-emerald-500" placeholder="Tulis instruksi khusus untuk editor di sini..."></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-slate-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 border-t border-slate-100">
+                                <button type="submit" class="inline-flex w-full justify-center rounded-lg bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-700 sm:ml-3 sm:w-auto">Kirim Sekarang</button>
+                                <button type="button" @click="showEditorModal = false" class="mt-3 inline-flex w-full justify-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50 sm:mt-0 sm:w-auto">Batal</button>
                             </div>
                         </form>
                     </div>

@@ -174,4 +174,52 @@ class NaskahController extends Controller
         return redirect()->route('author.naskah.index')
             ->with('success', 'Naskah revisi berhasil dikirim ke reviewer.');
     }
+
+    /**
+     * Submit confirmation / revision back to the Editor.
+     */
+    public function confirmEditor(Request $request, int $id)
+    {
+        $request->validate([
+            'notes' => 'required|string|min:10',
+            'revision_file' => 'nullable|file|mimes:pdf,docx,doc|max:10240', // max 10MB
+        ]);
+
+        $naskah = Naskah::where('author_id', Auth::id())->findOrFail($id);
+
+        // Upload revision file if provided
+        if ($request->hasFile('revision_file')) {
+            $file = $request->file('revision_file');
+            $path = $file->store('naskah', 'public');
+            
+            // Calculate next version
+            $lastVersion = $naskah->files()->max('version') ?? 1;
+            $nextVersion = $lastVersion + 1;
+
+            $naskah->files()->create([
+                'jenis_file' => 'revisi',
+                'file_name' => $file->getClientOriginalName(),
+                'file_path' => $path,
+                'file_size' => $file->getSize(),
+                'mime_type' => $file->getClientMimeType(),
+                'version' => $nextVersion,
+                'uploaded_at' => now(),
+            ]);
+        }
+
+        // Create an entry in editorLogs to record the Author's reply
+        $naskah->editorLogs()->create([
+            'id_user' => $naskah->editor_id, // Assigned Editor
+            'comments' => 'Balasan Author: "' . $request->notes . '"',
+            'decision' => 'editing', // Set back to 'editing'
+            'tanggal_edit' => now(),
+        ]);
+
+        // Set status back to 'editing' so Editor knows it is in progress
+        $naskah->status = 'editing';
+        $naskah->save();
+
+        return redirect()->route('author.naskah.show', $naskah->id)
+            ->with('success', 'Balasan konfirmasi berhasil dikirim ke editor.');
+    }
 }

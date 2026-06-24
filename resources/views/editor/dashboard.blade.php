@@ -9,25 +9,25 @@
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
             <x-card class="border-l-4 border-l-teal-500">
                 <div class="text-teal-700 text-sm font-medium tracking-wide">Menunggu Edit</div>
-                <div class="text-4xl font-bold text-slate-900 mt-3 tracking-tight">8</div>
+                <div class="text-4xl font-bold text-slate-900 mt-3 tracking-tight">{{ $waitingCount }}</div>
                 <p class="text-xs text-slate-500 mt-2">Naskah disetujui yang perlu dirapikan.</p>
             </x-card>
             <x-card class="border-l-4 border-l-sky-500">
                 <div class="text-sky-700 text-sm font-medium tracking-wide">Sedang Disunting</div>
-                <div class="text-4xl font-bold text-slate-900 mt-3 tracking-tight">3</div>
+                <div class="text-4xl font-bold text-slate-900 mt-3 tracking-tight">{{ $editingCount }}</div>
                 <p class="text-xs text-slate-500 mt-2">Naskah sedang diperbaiki bahasa dan formatnya.</p>
             </x-card>
             <x-card class="border-l-4 border-l-emerald-500">
-                <div class="text-emerald-700 text-sm font-medium tracking-wide">Dikirim ke Author</div>
-                <div class="text-4xl font-bold text-slate-900 mt-3 tracking-tight">5</div>
-                <p class="text-xs text-slate-500 mt-2">File hasil edit sudah dikirim untuk author.</p>
+                <div class="text-emerald-700 text-sm font-medium tracking-wide">Selesai Disunting</div>
+                <div class="text-4xl font-bold text-slate-900 mt-3 tracking-tight">{{ $completedCount }}</div>
+                <p class="text-xs text-slate-500 mt-2">File hasil edit sudah dikirim untuk admin/author.</p>
             </x-card>
         </div>
 
         <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
             <div class="px-6 py-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-slate-50/50">
                 <div>
-                    <h3 class="text-base font-semibold text-slate-800">Antrian Penyuntingan</h3>
+                    <h3 class="text-base font-semibold text-slate-800">Antrean Penyuntingan</h3>
                     <p class="text-sm text-slate-500 mt-1">Naskah yang sudah disetujui dan perlu dirapikan sebelum dikirim ke author.</p>
                 </div>
                 <a href="/editor/naskah" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg text-white bg-teal-700 hover:bg-teal-800 transition-colors active:scale-[0.98]">
@@ -40,37 +40,46 @@
                         <tr>
                             <th class="px-6 py-4 font-medium">Judul Naskah</th>
                             <th class="px-6 py-4 font-medium">Status Edit</th>
-                            <th class="px-6 py-4 font-medium">Deadline</th>
+                            <th class="px-6 py-4 font-medium">Deadline perkiraan</th>
                             <th class="px-6 py-4 font-medium">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
-                        <tr class="hover:bg-slate-50/50 transition-colors">
-                            <td class="px-6 py-4">
-                                <div class="font-medium text-slate-900">Dasar Logika Matematika</div>
-                                <div class="text-xs text-slate-500 mt-0.5">Dr. Budi Santoso</div>
-                            </td>
-                            <td class="px-6 py-4">
-                                <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-teal-50 text-teal-700 ring-1 ring-inset ring-teal-600/20">Menunggu Edit</span>
-                            </td>
-                            <td class="px-6 py-4 text-rose-600 font-medium">12 Jun 2026</td>
-                            <td class="px-6 py-4">
-                                <a href="/editor/naskah/1" class="text-sm font-medium text-teal-700 hover:text-teal-800">Edit</a>
-                            </td>
-                        </tr>
-                        <tr class="hover:bg-slate-50/50 transition-colors">
-                            <td class="px-6 py-4">
-                                <div class="font-medium text-slate-900">Riset Komunikasi Digital</div>
-                                <div class="text-xs text-slate-500 mt-0.5">Prof. Ratna Wiradewi</div>
-                            </td>
-                            <td class="px-6 py-4">
-                                <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-sky-50 text-sky-700 ring-1 ring-inset ring-sky-600/20">Sedang Disunting</span>
-                            </td>
-                            <td class="px-6 py-4 text-slate-600">18 Jun 2026</td>
-                            <td class="px-6 py-4">
-                                <a href="/editor/naskah/2" class="text-sm font-medium text-teal-700 hover:text-teal-800">Buka</a>
-                            </td>
-                        </tr>
+                        @forelse($recent as $item)
+                            <tr class="hover:bg-slate-50/50 transition-colors">
+                                <td class="px-6 py-4">
+                                    <div class="font-medium text-slate-900">{{ $item->title }}</div>
+                                    <div class="text-xs text-slate-500 mt-0.5">{{ $item->user->name ?? '-' }}</div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium 
+                                        @if($item->status === 'perlu_edit') bg-teal-50 text-teal-700 ring-1 ring-teal-600/20
+                                        @elseif($item->status === 'editing') bg-sky-50 text-sky-700 ring-1 ring-sky-600/20
+                                        @else bg-emerald-50 text-emerald-700 ring-1 ring-emerald-600/20
+                                        @endif">
+                                        {{ $item->status_label }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-slate-600">
+                                    {{ $item->submitted_at ? $item->submitted_at->copy()->addDays(14)->translatedFormat('d M Y') : $item->created_at->copy()->addDays(14)->translatedFormat('d M Y') }}
+                                </td>
+                                <td class="px-6 py-4">
+                                    <a href="/editor/naskah/{{ $item->id }}" class="text-sm font-medium text-teal-700 hover:text-teal-800">
+                                        @if($item->status === 'perlu_edit')
+                                            Mulai Edit
+                                        @else
+                                            Buka
+                                        @endif
+                                    </a>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="px-6 py-8 text-center text-slate-400">
+                                    Tidak ada antrean naskah yang memerlukan penyuntingan saat ini.
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
