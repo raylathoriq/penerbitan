@@ -72,7 +72,7 @@
 
                                 <div class="space-y-4">
                                     <div>
-                                        <label for="name_{{ $package->id }}" class="block text-sm font-medium text-slate-700 mb-1">Nama Paket <span class="text-rose-500">*</span></label>
+                                        <label for="name_{{ $package->id }}" class="block text-sm font-medium text-slate-700 mb-1">Nama Paket</label>
                                         <input 
                                             type="text" 
                                             id="name_{{ $package->id }}" 
@@ -85,7 +85,7 @@
 
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div>
-                                            <label for="price_{{ $package->id }}" class="block text-sm font-medium text-slate-700 mb-1">Harga (Rupiah) <span class="text-rose-500">*</span></label>
+                                            <label for="price_{{ $package->id }}" class="block text-sm font-medium text-slate-700 mb-1">Harga (Rupiah)</label>
                                             <div class="relative rounded-lg shadow-sm">
                                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                                     <span class="text-slate-400 text-sm">Rp</span>
@@ -103,7 +103,7 @@
                                         </div>
 
                                         <div>
-                                            <label for="status_{{ $package->id }}" class="block text-sm font-medium text-slate-700 mb-1">Status Keaktifan <span class="text-rose-500">*</span></label>
+                                            <label for="status_{{ $package->id }}" class="block text-sm font-medium text-slate-700 mb-1">Status Keaktifan</label>
                                             <select 
                                                 id="status_{{ $package->id }}" 
                                                 name="status" 
@@ -175,7 +175,7 @@
             @csrf
             <div class="space-y-4">
                 <div>
-                    <label for="name" class="block text-sm font-medium text-slate-700 mb-1">Nama Paket <span class="text-rose-500">*</span></label>
+                    <label for="name" class="block text-sm font-medium text-slate-700 mb-1">Nama Paket</label>
                     <input 
                         type="text" 
                         id="name" 

@@ -71,7 +71,7 @@
 
                             <div class="space-y-4">
                                 <div>
-                                    <label for="name_{{ $user->id }}" class="block text-sm font-medium text-slate-700 mb-1">Nama Lengkap <span class="text-rose-500">*</span></label>
+                                    <label for="name_{{ $user->id }}" class="block text-sm font-medium text-slate-700 mb-1">Nama Lengkap</label>
                                     <input 
                                         type="text" 
                                         id="name_{{ $user->id }}" 
@@ -83,7 +83,7 @@
                                 </div>
 
                                 <div>
-                                    <label for="email_{{ $user->id }}" class="block text-sm font-medium text-slate-700 mb-1">Alamat Email <span class="text-rose-500">*</span></label>
+                                    <label for="email_{{ $user->id }}" class="block text-sm font-medium text-slate-700 mb-1">Alamat Email</label>
                                     <input 
                                         type="email" 
                                         id="email_{{ $user->id }}" 
@@ -97,7 +97,7 @@
 
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
-                                        <label for="role_{{ $user->id }}" class="block text-sm font-medium text-slate-700 mb-1">Role / Peran <span class="text-rose-500">*</span></label>
+                                        <label for="role_{{ $user->id }}" class="block text-sm font-medium text-slate-700 mb-1">Role / Peran</label>
                                         <select 
                                             id="role_{{ $user->id }}" 
                                             name="role" 
@@ -112,7 +112,7 @@
 
                                     <div>
                                         <!-- Field Status untuk menonaktifkan pengguna -->
-                                        <label for="status_{{ $user->id }}" class="block text-sm font-medium text-slate-700 mb-1">Status Akun <span class="text-rose-500">*</span></label>
+                                        <label for="status_{{ $user->id }}" class="block text-sm font-medium text-slate-700 mb-1">Status Akun</label>
                                         <select 
                                             id="status_{{ $user->id }}" 
                                             name="status" 
@@ -187,7 +187,7 @@
             @csrf
             <div class="space-y-4">
                 <div>
-                    <label for="name" class="block text-sm font-medium text-slate-700 mb-1">Nama Lengkap <span class="text-rose-500">*</span></label>
+                    <label for="name" class="block text-sm font-medium text-slate-700 mb-1">Nama Lengkap</label>
                     <input 
                         type="text" 
                         id="name" 
@@ -199,7 +199,7 @@
                 </div>
 
                 <div>
-                    <label for="email" class="block text-sm font-medium text-slate-700 mb-1">Alamat Email <span class="text-rose-500">*</span></label>
+                    <label for="email" class="block text-sm font-medium text-slate-700 mb-1">Alamat Email</label>
                     <input 
                         type="email" 
                         id="email" 
@@ -211,7 +211,7 @@
                 </div>
 
                 <div>
-                    <label for="password" class="block text-sm font-medium text-slate-700 mb-1">Password <span class="text-rose-500">*</span></label>
+                    <label for="password" class="block text-sm font-medium text-slate-700 mb-1">Password</label>
                     <input 
                         type="password" 
                         id="password" 
@@ -224,7 +224,7 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label for="role" class="block text-sm font-medium text-slate-700 mb-1">Role / Peran <span class="text-rose-500">*</span></label>
+                        <label for="role" class="block text-sm font-medium text-slate-700 mb-1">Role / Peran</label>
                         <select 
                             id="role" 
                             name="role" 
@@ -237,7 +237,7 @@
                     </div>
 
                     <div>
-                        <label for="status" class="block text-sm font-medium text-slate-700 mb-1">Status Akun <span class="text-rose-500">*</span></label>
+                        <label for="status" class="block text-sm font-medium text-slate-700 mb-1">Status Akun</label>
                         <select 
                             id="status" 
                             name="status" 

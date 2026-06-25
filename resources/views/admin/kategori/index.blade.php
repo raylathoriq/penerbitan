@@ -61,7 +61,7 @@
 
                                 <div class="space-y-4">
                                     <div>
-                                        <label for="nama_kategori_{{ $category->id }}" class="block text-sm font-medium text-slate-700 mb-1">Nama Kategori <span class="text-rose-500">*</span></label>
+                                        <label for="nama_kategori_{{ $category->id }}" class="block text-sm font-medium text-slate-700 mb-1">Nama Kategori</label>
                                         <input 
                                             type="text" 
                                             id="nama_kategori_{{ $category->id }}" 

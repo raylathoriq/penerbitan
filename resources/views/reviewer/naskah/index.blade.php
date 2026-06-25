@@ -30,8 +30,8 @@
                                 <div class="font-medium text-slate-900">{{ $naskah->title }}</div>
                                 <div class="text-xs text-slate-500 mt-0.5">Oleh: {{ $naskah->user->name ?? '-' }}</div>
                             </td>
-                            <td class="px-6 py-4 text-slate-600 max-w-xs truncate" title="{{ $review->assignment_note ?? '-' }}">
-                                {{ $review->assignment_note ?? '-' }}
+                            <td class="px-6 py-4 text-slate-600 max-w-xs truncate" title="{{ $review?->assignment_note ?? '-' }}">
+                                {{ $review?->assignment_note ?? '-' }}
                             </td>
                             <td class="px-6 py-4">
                                 @if($review && $review->reviewed_at)
@@ -42,7 +42,9 @@
                             </td>
                             <td class="px-6 py-4 text-slate-600">{{ $review && $review->reviewed_at ? $review->reviewed_at->copy()->setTimezone('Asia/Jakarta')->locale('id')->translatedFormat('d F Y') : '-' }}</td>
                             <td class="px-6 py-4 ">
-                                <a href="{{ url('/reviewer/naskah/'.$naskah->id) }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-700">Mulai Review</a>
+                                <a href="{{ url('/reviewer/naskah/'.$naskah->id) }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-700">
+                                    {{ $review && $review->reviewed_at ? 'Lihat Detail' : 'Mulai Review' }}
+                                </a>
                             </td>
                         </tr>
                     @endforeach

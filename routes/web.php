@@ -18,9 +18,7 @@ use Illuminate\Support\Facades\Route;
 
 // Public
 Route::view('/', 'public.landing');
-Route::view('/katalog', 'public.catalog');
 Route::view('/persyaratan', 'public.requirements');
-Route::view('/buku/{id}', 'public.detail-book');
 
 // Auth
 Route::get('/auth/login', [AuthController::class, 'showLogin'])->name('login');
@@ -92,6 +90,7 @@ Route::prefix('author')->middleware('auth')->group(function () {
     Route::get('/revisi/{id}', [AuthorNaskahController::class, 'revisi'])->name('author.naskah.revisi');
     Route::post('/revisi/{id}', [AuthorNaskahController::class, 'storeRevisi'])->name('author.naskah.storeRevisi');
     Route::post('/naskah/{id}/confirm-editor', [AuthorNaskahController::class, 'confirmEditor'])->name('author.naskah.confirmEditor');
+    Route::post('/naskah/{id}/cancel', [AuthorNaskahController::class, 'cancel'])->name('author.naskah.cancel');
     Route::view('/profil', 'author.profil');
 });
 

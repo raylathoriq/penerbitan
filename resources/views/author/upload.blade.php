@@ -16,7 +16,7 @@
             <div class="space-y-6">
                 <!-- Dropdown Kategori -->
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Kategori Naskah <span class="text-rose-500">*</span></label>
+                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Kategori Naskah</label>
                     <select name="category_id" class="block w-full rounded-lg border-slate-200 py-2.5 px-3 focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm border shadow-sm transition-all focus:outline-none" required>
                         <option value="" disabled selected>Pilih Kategori Bidang Ilmu...</option>
                         @foreach($categories as $category)
@@ -30,7 +30,7 @@
 
                 <!-- Dropdown Paket -->
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Paket Penerbitan <span class="text-rose-500">*</span></label>
+                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Paket Penerbitan</label>
                     <select name="package_id" class="block w-full rounded-lg border-slate-200 py-2.5 px-3 focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm border shadow-sm transition-all focus:outline-none" required>
                         <option value="" disabled selected>Pilih Paket Penerbitan...</option>
                         @foreach($packages as $package)
@@ -44,7 +44,7 @@
 
                 <!-- Judul Buku -->
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Judul Buku <span class="text-rose-500">*</span></label>
+                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Judul Buku</label>
                     <input type="text" name="title" value="{{ old('title') }}" class="block w-full rounded-lg border-slate-200 py-2.5 px-3 focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm border shadow-sm transition-all focus:outline-none" required>
                     @error('title')
                         <p class="text-sm text-rose-600 mt-1">{{ $message }}</p>
@@ -92,7 +92,7 @@
 
                 <!-- Sinopsis -->
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Abstrak / Sinopsis Singkat <span class="text-rose-500">*</span></label>
+                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Abstrak / Sinopsis Singkat</label>
                     <textarea name="description" rows="5" class="block w-full rounded-lg border-slate-200 p-3 focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm border shadow-sm transition-all focus:outline-none" required>{{ old('description') }}</textarea>
                     @error('description')
                         <p class="text-sm text-rose-600 mt-1">{{ $message }}</p>
@@ -101,7 +101,7 @@
 
                 <!-- Upload File -->
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Upload File Naskah (PDF/DOC/DOCX) <span class="text-rose-500">*</span></label>
+                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Upload File Naskah (PDF/DOC/DOCX)</label>
                     <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-200 border-dashed rounded-xl bg-slate-50/50 hover:bg-slate-50 transition-colors">
                         <div class="space-y-1 text-center">
                             <svg class="mx-auto h-10 w-10 text-slate-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">

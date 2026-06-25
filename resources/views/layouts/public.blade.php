@@ -20,7 +20,6 @@
                     </div>
                     <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
                         <a href="/" class="{{ request()->is('/') ? 'border-green-700 text-slate-900' : 'border-transparent text-slate-500 hover:border-green-700 hover:text-slate-700' }} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Beranda</a>
-                        <a href="/katalog" class="{{ request()->is('katalog*') ? 'border-green-700 text-slate-900' : 'border-transparent text-slate-500 hover:border-green-700 hover:text-slate-700' }} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Katalog Buku</a>
                         <a href="/persyaratan" class="{{ request()->is('persyaratan*') ? 'border-green-700 text-slate-900' : 'border-transparent text-slate-500 hover:border-green-700 hover:text-slate-700' }} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Persyaratan & Alur</a>
                     </div>
                 </div>
