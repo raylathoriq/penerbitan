@@ -16,6 +16,10 @@
             <option value="diajukan" {{ request('status') == 'diajukan' ? 'selected' : '' }}>Diajukan</option>
             <option value="dalam review" {{ request('status') == 'dalam review' ? 'selected' : '' }}>Dalam Review</option>
             <option value="revisi" {{ request('status') == 'revisi' ? 'selected' : '' }}>Revisi</option>
+            <option value="perlu_edit" {{ request('status') == 'perlu_edit' ? 'selected' : '' }}>Menunggu Edit</option>
+            <option value="editing" {{ request('status') == 'editing' ? 'selected' : '' }}>Sedang Disunting</option>
+            <option value="selesai" {{ request('status') == 'selesai' ? 'selected' : '' }}>Selesai Disunting</option>
+            <option value="pengajuan_isbn" {{ request('status') == 'pengajuan_isbn' ? 'selected' : '' }}>Pengajuan ISBN</option>
             <option value="diterima" {{ request('status') == 'diterima' ? 'selected' : '' }}>Diterima</option>
             <option value="ditolak" {{ request('status') == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
         </select>
@@ -51,7 +55,7 @@
                             {{ $admDate ? $admDate->copy()->setTimezone('Asia/Jakarta')->locale('id')->translatedFormat('d F Y H:i') . ' WIB' : '-' }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <x-badge :status="$naskah->status" />
+                            <x-badge :status="$naskah->status_label" />
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <a href="{{ route('admin.naskah.show', $naskah->id) }}" class="text-emerald-600 hover:text-emerald-800 transition-colors">Review</a>

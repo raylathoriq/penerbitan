@@ -5,63 +5,110 @@
 @section('content')
 <div class="mb-6">
     <a href="{{ route('author.naskah.index') }}" class="inline-flex items-center text-sm font-medium text-slate-500 hover:text-slate-800 transition-colors">
-        <svg class="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
         Kembali ke halaman Naskah
     </a>
 </div>
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
     <div class="lg:col-span-2 space-y-6">
-        <x-card>
-            <div class="flex justify-between items-start mb-6">
-                <div>
-                    <h2 class="text-2xl font-bold text-slate-900 tracking-tight">{{ $naskah->title }}</h2>
-                    <p class="text-slate-500 mt-1">Diajukan oleh {{ $naskah->user->name }}</p>
+        <!-- Premium Manuscript Details Card -->
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_12px_-3px_rgba(0,0,0,0.04)] overflow-hidden">
+            <!-- Header Block -->
+            <div class="p-6 sm:p-8 border-b border-slate-100 bg-slate-50/30">
+                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
+                    <div class="space-y-1.5 flex-1">
+                        <h2 class="text-2xl font-bold text-slate-900 tracking-tight leading-snug">{{ $naskah->title }}</h2>
+                        <div class="flex flex-wrap items-center gap-2.5 text-xs text-slate-500">
+                            <span>Diajukan oleh: <span class="font-medium text-slate-800">{{ $naskah->user->name }}</span></span>
+                            <span class="text-slate-300">•</span>
+                            <span>{{ $naskah->created_at->setTimezone('Asia/Jakarta')->locale('id')->translatedFormat('d M Y, H:i') }} WIB</span>
+                        </div>
+                    </div>
+                    <div class="self-start sm:self-auto shrink-0">
+                        <x-badge status="{{ $naskah->status_label }}" />
+                    </div>
                 </div>
-                <x-badge status="{{ $naskah->status_label }}" />
+
+                <!-- Kategori & Paket Row -->
+                <div class="flex flex-wrap items-center gap-2 mt-4">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100/60 shadow-sm">
+                        Kategori: {{ $naskah->category->nama_kategori ?? '-' }}
+                    </span>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-sky-50 text-sky-700 border border-sky-100/60 shadow-sm">
+                        Paket: {{ $naskah->package->nama_paket ?? '-' }}
+                    </span>
+                </div>
             </div>
-            
-            <div class="space-y-5 border-t border-slate-100 pt-5">
-                <div>
-                    <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Kategori & Paket</h4>
-                    <p class="text-slate-900 text-sm font-medium">
-                        Kategori: <span class="text-emerald-700 font-semibold">{{ $naskah->category->nama_kategori ?? '-' }}</span> | 
-                        Paket: <span class="text-emerald-700 font-semibold">{{ $naskah->package->nama_paket ?? '-' }}</span>
+
+            <!-- Body Content -->
+            <div class="p-6 sm:p-8 space-y-8">
+                <!-- Abstrak / Sinopsis Section -->
+                <div class="space-y-2">
+                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                        Abstrak / Sinopsis
+                    </h4>
+                    <p class="text-xs text-slate-600 leading-relaxed whitespace-pre-line border-l-2 border-slate-200 pl-4 py-0.5">
+                        {{ $naskah->description }}
                     </p>
                 </div>
-                <div>
-                    <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Daftar Penulis</h4>
-                    <p class="text-slate-900 text-sm leading-relaxed">
-                        <strong class="font-semibold">{{ $naskah->user->name }}</strong> (Penulis Utama)
+
+                <!-- Daftar Penulis Section -->
+                <div class="space-y-3">
+                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                        Daftar Penulis
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- Penulis Utama -->
+                        <div class="p-5 bg-white border border-slate-100 rounded-xl shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)]">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100/50">Penulis Utama</span>
+                            <p class="text-sm font-semibold text-slate-800 mt-2.5">{{ $naskah->user->name }}</p>
+                            <p class="text-xs text-slate-500 mt-0.5">{{ $naskah->user->afiliasi ?? '-' }}</p>
+                            <p class="text-[10px] text-slate-400 mt-1">{{ $naskah->user->email }}</p>
+                        </div>
+
+                        <!-- Penulis Pendamping -->
                         @if(!empty($naskah->co_author))
                             @foreach($naskah->co_author as $co)
-                                <br>
-                                <span class="text-slate-600">— {{ $co['name'] ?? '-' }} ({{ $co['affiliation'] ?? '-' }}) <span class="text-slate-400">&lt;{{ $co['email'] ?? '-' }}&gt;</span></span>
+                                <div class="p-5 bg-white border border-slate-100 rounded-xl shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)]">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-600 border border-slate-200/50">Penulis Pendamping</span>
+                                    <p class="text-sm font-semibold text-slate-800 mt-2.5">{{ $co['name'] ?? '-' }}</p>
+                                    <p class="text-xs text-slate-500 mt-0.5">{{ $co['affiliation'] ?? '-' }}</p>
+                                    <p class="text-[10px] text-slate-400 mt-1">{{ $co['email'] ?? '-' }}</p>
+                                </div>
                             @endforeach
                         @endif
-                    </p>
+                    </div>
                 </div>
-                <div>
-                    <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Abstrak / Sinopsis</h4>
-                    <p class="text-slate-700 leading-relaxed text-sm whitespace-pre-line">{{ $naskah->description }}</p>
-                </div>
-                <div>
-                    <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">File Terkirim</h4>
+
+                <!-- File Terkirim Section -->
+                <div class="space-y-3">
+                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                        File Terkirim
+                    </h4>
                     @php $authorFiles = $naskah->files()->whereIn('jenis_file', ['original', 'revisi'])->orderBy('version')->get(); @endphp
                     @if($authorFiles->isNotEmpty())
-                        <div class="space-y-3 mt-2">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             @foreach($authorFiles as $file)
-                                <div class="flex items-center gap-3">
-                                    <a href="{{ asset('storage/' . $file->file_path) }}" target="_blank" class="inline-flex items-center px-4 py-2 border border-slate-200 shadow-sm rounded-lg text-sm text-slate-700 bg-white hover:bg-slate-50 hover:text-emerald-700 transition-colors">
-                                        <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                                        {{ $file->file_name }}
+                                <div class="flex items-center justify-between p-3.5 bg-slate-50/50 border border-slate-100 rounded-xl hover:bg-slate-50 transition-colors">
+                                    <div class="flex items-center gap-3 min-w-0">
+                                        <div class="p-2 bg-white rounded-lg border border-slate-100 text-rose-500 shadow-sm flex items-center justify-center shrink-0">
+                                            <i class="bi bi-file-earmark-pdf text-xl"></i>
+                                        </div>
+                                        <div class="min-w-0">
+                                            <p class="text-sm font-semibold text-slate-900 truncate" title="{{ $file->file_name }}">{{ $file->file_name }}</p>
+                                            <div class="flex items-center gap-2 mt-0.5">
+                                                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold {{ $file->jenis_file === 'revisi' ? 'bg-amber-50 text-amber-700 border border-amber-100/50' : 'bg-slate-100 text-slate-700 border border-slate-200/50' }} border">
+                                                    {{ $file->jenis_file === 'revisi' ? 'Revisi (v' . $file->version . ')' : 'Asli (v1)' }}
+                                                </span>
+                                                @if($file->file_size)
+                                                    <span class="text-[10px] text-slate-400">{{ round($file->file_size / 1024, 1) }} KB</span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <a href="{{ asset('storage/' . $file->file_path) }}" target="_blank" class="p-2 text-slate-400 hover:text-emerald-700 hover:bg-white rounded-lg border border-transparent hover:border-slate-100 shadow-none hover:shadow-sm transition-all flex items-center justify-center shrink-0 ml-2" title="Unduh File">
+                                        <i class="bi bi-download text-lg"></i>
                                     </a>
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-800 border border-slate-200">
-                                        {{ $file->jenis_file === 'revisi' ? 'Revisi (v' . $file->version . ')' : 'Asli (v1)' }}
-                                    </span>
-                                    @if($file->file_size)
-                                        <span class="text-xs text-slate-400">{{ round($file->file_size / 1024, 1) }} KB</span>
-                                    @endif
                                 </div>
                             @endforeach
                         </div>
@@ -70,31 +117,48 @@
                     @endif
                 </div>
 
-                {{-- Hasil Penyuntingan Editor --}}
+                <!-- Hasil Penyuntingan Editor -->
                 @php $editorFile = $naskah->editorFile(); @endphp
-                @if($editorFile)
-                    <div class="mt-6 border-t border-slate-100 pt-5">
-                        <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Berkas Hasil Penyuntingan Editor</h4>
-                        <div class="flex items-center gap-3">
-                            <a href="{{ asset('storage/' . $editorFile->file_path) }}" target="_blank" class="inline-flex items-center px-4 py-2 border border-emerald-200 shadow-sm rounded-lg text-sm text-emerald-800 bg-emerald-50 hover:bg-emerald-100 transition-colors">
-                                <svg class="h-4 w-4 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0"></path></svg>
-                                {{ $editorFile->file_name }} (v{{ $editorFile->version }})
-                            </a>
-                            <span class="text-xs text-slate-500">Unduh berkas final hasil penyuntingan editor.</span>
-                        </div>
-                    </div>
-                @endif
-
                 @php $coverFile = $naskah->editorCoverFile(); @endphp
-                @if($coverFile)
-                    <div class="mt-4 pt-4 border-t border-slate-100">
-                        <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Cover Buku (Editor)</h4>
-                        <div class="flex items-center gap-3">
-                            <a href="{{ asset('storage/' . $coverFile->file_path) }}" target="_blank" class="inline-flex items-center px-4 py-2 border border-indigo-200 shadow-sm rounded-lg text-sm text-indigo-800 bg-indigo-50 hover:bg-indigo-100 transition-colors">
-                                <svg class="h-4 w-4 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                {{ $coverFile->file_name }}
-                            </a>
-                            <span class="text-xs text-slate-500">Unduh berkas gambar cover/sampul buku Anda.</span>
+                @if($editorFile || $coverFile)
+                    <div class="pt-6 border-t border-slate-100 space-y-4">
+                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                            Hasil Penyuntingan Editor
+                        </h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            @if($editorFile)
+                                <div class="flex items-center justify-between p-4 bg-emerald-50/30 border border-emerald-100/60 rounded-xl">
+                                    <div class="flex items-center gap-3 min-w-0">
+                                        <div class="p-2.5 bg-white rounded-lg border border-emerald-100 text-emerald-700 shadow-sm flex items-center justify-center shrink-0">
+                                            <i class="bi bi-file-earmark-check text-xl"></i>
+                                        </div>
+                                        <div class="min-w-0">
+                                            <p class="text-sm font-semibold text-slate-900 truncate" title="{{ $editorFile->file_name }}">{{ $editorFile->file_name }}</p>
+                                            <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100 mt-0.5">Versi Final (v{{ $editorFile->version }})</span>
+                                        </div>
+                                    </div>
+                                    <a href="{{ asset('storage/' . $editorFile->file_path) }}" target="_blank" class="p-2 text-emerald-600 hover:text-emerald-800 hover:bg-white rounded-lg border border-transparent hover:border-emerald-100 shadow-none hover:shadow-sm transition-all flex items-center justify-center shrink-0 ml-2" title="Unduh Hasil Edit">
+                                        <i class="bi bi-download text-lg"></i>
+                                    </a>
+                                </div>
+                            @endif
+
+                            @if($coverFile)
+                                <div class="flex items-center justify-between p-4 bg-indigo-50/30 border border-indigo-100/60 rounded-xl">
+                                    <div class="flex items-center gap-3 min-w-0">
+                                        <div class="p-2.5 bg-white rounded-lg border border-indigo-100 text-indigo-700 shadow-sm flex items-center justify-center shrink-0">
+                                            <i class="bi bi-image text-xl"></i>
+                                        </div>
+                                        <div class="min-w-0">
+                                            <p class="text-sm font-semibold text-slate-900 truncate" title="{{ $coverFile->file_name }}">{{ $coverFile->file_name }}</p>
+                                            <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-100 mt-0.5">Cover / Sampul Buku</span>
+                                        </div>
+                                    </div>
+                                    <a href="{{ asset('storage/' . $coverFile->file_path) }}" target="_blank" class="p-2 text-indigo-600 hover:text-indigo-800 hover:bg-white rounded-lg border border-transparent hover:border-indigo-100 shadow-none hover:shadow-sm transition-all flex items-center justify-center shrink-0 ml-2" title="Unduh Cover">
+                                        <i class="bi bi-download text-lg"></i>
+                                    </a>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 @endif
@@ -138,7 +202,7 @@
                                             <div class="flex items-center text-xs">
                                                 <span class="text-slate-400 mr-2">File Koreksi:</span>
                                                 <a href="{{ asset('storage/' . $reviewerFile->file_path) }}" target="_blank" class="inline-flex items-center font-medium text-indigo-600 hover:text-indigo-700 transition-colors">
-                                                    <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                                                    <i class="bi bi-download mr-1"></i>
                                                     {{ $reviewerFile->file_name }}
                                                 </a>
                                             </div>
@@ -150,16 +214,47 @@
                     </div>
                 @endif
             </div>
-        </x-card>
+        </div>
 
         @php
             $latestEditorLog = $naskah->editorLogs()->latest()->first();
             $needsAuthorConfirmation = ($naskah->status === 'editing' && $latestEditorLog && $latestEditorLog->decision === 'perlu_cek');
         @endphp
+        
+        @if($latestEditorLog && $naskah->status === 'revisi')
+            <div class="bg-white rounded-2xl border border-slate-100 p-6 shadow-[0_2px_12px_-3px_rgba(0,0,0,0.04)]">
+                <div class="flex items-center gap-3 mb-4 pb-3 border-b border-slate-100">
+                    <div class="p-2.5 bg-rose-50 text-rose-600 rounded-xl">
+                        <i class="bi bi-exclamation-triangle text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900">Permintaan Revisi / Klarifikasi Editor</h3>
+                        <p class="text-xs text-slate-400 mt-0.5">Harap segera respon catatan editor di bawah ini.</p>
+                    </div>
+                </div>
+                <div class="text-sm text-slate-700 whitespace-pre-line leading-relaxed">
+                    {{ $latestEditorLog->comments }}
+                </div>
+            </div>
+        @endif
+
         @if($needsAuthorConfirmation)
             <x-card class="mt-6 border border-amber-200 bg-amber-50/10">
                 <h3 class="text-lg font-semibold text-amber-900 mb-1">Konfirmasi Catatan Editor</h3>
                 <p class="text-sm text-slate-600 mb-4">Editor sedang menunggu konfirmasi atau revisi Anda. Harap berikan catatan penjelasan dan/atau unggah berkas revisi di bawah ini.</p>
+
+                {{-- Catatan dari Editor --}}
+                @if($latestEditorLog && $latestEditorLog->comments)
+                    <div class="mb-5 bg-white border border-amber-200 rounded-xl p-4 shadow-sm">
+                        <div class="flex items-center justify-between mb-2 pb-2 border-b border-slate-100">
+                            <span class="text-xs font-bold text-amber-800 uppercase tracking-wider">Catatan / Masukan Editor</span>
+                            <span class="text-[10px] text-slate-400 font-medium">{{ $latestEditorLog->created_at->copy()->setTimezone('Asia/Jakarta')->locale('id')->translatedFormat('d F Y H:i') }} WIB</span>
+                        </div>
+                        <div class="text-sm text-slate-700 whitespace-pre-line leading-relaxed">
+                            {{ $latestEditorLog->comments }}
+                        </div>
+                    </div>
+                @endif
                 
                 @if ($errors->any())
                     <div class="mb-4 p-3.5 bg-rose-50 border border-rose-100 rounded-lg text-xs text-rose-600">
@@ -174,7 +269,7 @@
                 <form action="{{ route('author.naskah.confirmEditor', $naskah->id) }}" method="POST" enctype="multipart/form-data" class="space-y-4">
                     @csrf
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Catatan Balasan <span class="text-rose-500">*</span></label>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Catatan Balasan</label>
                         <textarea name="notes" rows="3" required class="block w-full border border-slate-200 rounded-lg text-sm p-3 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm" placeholder="Tulis balasan konfirmasi Anda di sini..."></textarea>
                     </div>
                     <div>
@@ -189,7 +284,24 @@
                 </form>
             </x-card>
         @endif
-    </div>    <div class="lg:col-span-1">
+    </div>
+    
+    <div class="lg:col-span-1 space-y-6">
+        @if(in_array($naskah->status, ['diajukan', 'dalam review', 'revisi', 'perlu_edit', 'editing']))
+            <div class="bg-white rounded-2xl border border-rose-100 p-6 shadow-[0_2px_12px_-3px_rgba(0,0,0,0.04)]">
+                <h3 class="text-base font-bold text-rose-950 mb-2 flex items-center">
+                    Batalkan Pengajuan
+                </h3>
+                <p class="text-xs text-slate-600 mb-4 leading-relaxed">Jika Anda ingin membatalkan pengajuan naskah ini (misalnya karena terlalu banyak revisi atau alasan lain), Anda dapat membatalkannya.</p>
+                <form action="{{ route('author.naskah.cancel', $naskah->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin membatalkan pengajuan naskah ini? Tindakan ini tidak dapat dibatalkan.');">
+                    @csrf
+                    <button type="submit" class="w-full inline-flex justify-center items-center px-4 py-2 border border-rose-200 text-sm font-semibold rounded-lg text-rose-700 bg-white hover:bg-rose-50 hover:border-rose-300 transition-colors shadow-sm">
+                        Batalkan Naskah
+                    </button>
+                </form>
+            </div>
+        @endif
+
         <x-card class="bg-slate-50/50">
             <x-slot name="header">
                 <h3 class="text-lg font-semibold text-slate-900">Kronologi</h3>

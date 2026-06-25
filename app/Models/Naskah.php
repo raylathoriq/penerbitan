@@ -50,6 +50,7 @@ class Naskah extends Model
             'perlu_edit' => 'Menunggu Edit',
             'editing' => 'Sedang Disunting',
             'selesai' => 'Selesai Disunting',
+            'dibatalkan' => 'Dibatalkan',
         ];
 
         return $labels[$this->status] ?? ucwords(str_replace(['-', '_'], ' ', $this->status));

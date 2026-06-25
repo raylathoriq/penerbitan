@@ -1,19 +1,44 @@
-    @extends('layouts.reviewer')
+@extends('layouts.reviewer')
 
     @section('title', 'Reviewer Dashboard')
     @section('page_title', 'Dashboard')
 
     @section('content')
-   <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-         <x-card class="border-l-4 border-l-indigo-400">
-             <div class="text-indigo-500 text-sm font-medium tracking-wide">Menunggu Review</div>
-             <div class="text-4xl font-bold text-indigo-900 mt-3 tracking-tight">{{ $assignedCount ?? 0 }}</div>
-         </x-card>
-     <x-card class="border-l-4 border-l-emerald-400">
-             <div class="text-emerald-700 text-sm font-medium tracking-wide">Selesai Review</div>
-             <div class="text-4xl font-bold text-emerald-900 mt-3 tracking-tight">{{ $completedCount ?? 0 }}</div>
-     </x-card>
-    </div>
+   <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <!-- Card Menunggu Review -->
+          <div class="relative bg-white rounded-2xl border border-slate-100 p-6 shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] hover:shadow-md transition-all duration-300 flex flex-col justify-between min-h-[140px]">
+              <div class="flex justify-between items-start">
+                  <div class="space-y-1">
+                      <span class="text-xs font-semibold text-indigo-600 tracking-wider uppercase">Menunggu Review</span>
+                      <p class="text-xs text-slate-400 leading-snug">Antrean peninjauan baru</p>
+                  </div>
+                  <div class="text-indigo-500 flex items-center justify-center">
+                      <i class="bi bi-journal-text text-xl"></i>
+                  </div>
+              </div>
+              <div class="mt-4 flex items-baseline gap-1.5">
+                  <span class="text-3xl font-bold text-indigo-600 tracking-tight">{{ $assignedCount ?? 0 }}</span>
+                  <span class="text-[11px] font-medium text-indigo-500">Naskah</span>
+              </div>
+          </div>
+
+          <!-- Card Selesai Review -->
+          <div class="relative bg-white rounded-2xl border border-slate-100 p-6 shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] hover:shadow-md transition-all duration-300 flex flex-col justify-between min-h-[140px]">
+              <div class="flex justify-between items-start">
+                  <div class="space-y-1">
+                      <span class="text-xs font-semibold text-emerald-600 tracking-wider uppercase">Selesai Review</span>
+                      <p class="text-xs text-slate-400 leading-snug">Sudah dinilai</p>
+                  </div>
+                  <div class="text-emerald-500 flex items-center justify-center">
+                      <i class="bi bi-check-circle text-xl"></i>
+                  </div>
+              </div>
+              <div class="mt-4 flex items-baseline gap-1.5">
+                  <span class="text-3xl font-bold text-emerald-600 tracking-tight">{{ $completedCount ?? 0 }}</span>
+                  <span class="text-[11px] font-medium text-emerald-500">Naskah</span>
+              </div>
+          </div>
+     </div>
 
     <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
         <div class="px-6 py-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
@@ -43,7 +68,7 @@
                                     {{ $naskah->created_at ? $naskah->created_at->copy()->setTimezone('Asia/Jakarta')->locale('id')->translatedFormat('d M Y') : '-' }}
                                 </td>
                                 <td class="px-6 py-4 text-slate-600 font-medium">
-                                    {{ $naskah->created_at ? $naskah->created_at->addDays(14)->copy()->setTimezone('Asia/Jakarta')->locale('id')->translatedFormat('d M Y') : '-' }}
+                                    {{ $naskah->created_at ? $naskah->created_at->copy()->addDays(14)->setTimezone('Asia/Jakarta')->locale('id')->translatedFormat('d M Y') : '-' }}
                                 </td>
                                 <td class="px-6 py-4">
                                     @if($review && $review->reviewed_at)

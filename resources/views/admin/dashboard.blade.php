@@ -3,23 +3,91 @@
 @section('page_title', 'Dashboard Admin')
 
 @section('content')
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-    <x-card class="border-l-4 border-l-slate-400">
-        <div class="text-slate-500 text-sm font-medium tracking-wide">Naskah Masuk</div>
-        <div class="text-4xl font-bold text-slate-900 mt-3 tracking-tight">{{ $total ?? 0 }}</div>
-    </x-card>
-    <x-card class="border-l-4 border-l-blue-400">
-        <div class="text-blue-600 text-sm font-medium tracking-wide">Dalam Review</div>
-        <div class="text-4xl font-bold text-blue-900 mt-3 tracking-tight">{{ $inReview ?? 0 }}</div>
-    </x-card>
-    <x-card class="border-l-4 border-l-emerald-400">
-        <div class="text-emerald-600 text-sm font-medium tracking-wide">Diterima</div>
-        <div class="text-4xl font-bold text-emerald-900 mt-3 tracking-tight">{{ $published ?? 0 }}</div>
-    </x-card>
-    <x-card class="border-l-4 border-l-rose-400">
-        <div class="text-rose-600 text-sm font-medium tracking-wide">Ditolak</div>
-        <div class="text-4xl font-bold text-rose-900 mt-3 tracking-tight">{{ $rejected ?? 0 }}</div>
-    </x-card>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+    <!-- Card Naskah Masuk -->
+    <div class="relative bg-white rounded-2xl border border-slate-100 p-6 shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] hover:shadow-md transition-all duration-300 flex flex-col justify-between min-h-[140px]">
+        <div class="flex justify-between items-start">
+            <div class="space-y-1">
+                <span class="text-xs font-semibold text-slate-400 tracking-wider uppercase">Naskah Masuk</span>
+                <p class="text-xs text-slate-400 leading-snug">Total usulan masuk</p>
+            </div>
+            <div class="text-slate-400 flex items-center justify-center">
+                <i class="bi bi-journal-text text-xl"></i>
+            </div>
+        </div>
+        <div class="mt-4 flex items-baseline gap-1.5">
+            <span class="text-3xl font-bold text-slate-800 tracking-tight">{{ $total ?? 0 }}</span>
+            <span class="text-[11px] font-medium text-slate-400">Naskah</span>
+        </div>
+    </div>
+
+    <!-- Card Ditolak -->
+    <div class="relative bg-white rounded-2xl border border-slate-100 p-6 shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] hover:shadow-md transition-all duration-300 flex flex-col justify-between min-h-[140px]">
+        <div class="flex justify-between items-start">
+            <div class="space-y-1">
+                <span class="text-xs font-semibold text-rose-500 tracking-wider uppercase">Ditolak</span>
+                <p class="text-xs text-slate-400 leading-snug">Tidak lolos kriteria</p>
+            </div>
+            <div class="text-rose-400 flex items-center justify-center">
+                <i class="bi bi-x-circle text-xl"></i>
+            </div>
+        </div>
+        <div class="mt-4 flex items-baseline gap-1.5">
+            <span class="text-3xl font-bold text-rose-600 tracking-tight">{{ $rejected ?? 0 }}</span>
+            <span class="text-[11px] font-medium text-rose-400">Naskah</span>
+        </div>
+    </div>
+
+    <!-- Card Dalam Review -->
+    <div class="relative bg-white rounded-2xl border border-slate-100 p-6 shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] hover:shadow-md transition-all duration-300 flex flex-col justify-between min-h-[140px]">
+        <div class="flex justify-between items-start">
+            <div class="space-y-1">
+                <span class="text-xs font-semibold text-amber-600 tracking-wider uppercase">Dalam Review</span>
+                <p class="text-xs text-slate-400 leading-snug">Sedang dinilai reviewer</p>
+            </div>
+            <div class="text-amber-500 flex items-center justify-center">
+                <i class="bi bi-eye text-xl"></i>
+            </div>
+        </div>
+        <div class="mt-4 flex items-baseline gap-1.5">
+            <span class="text-3xl font-bold text-amber-600 tracking-tight">{{ $inReview ?? 0 }}</span>
+            <span class="text-[11px] font-medium text-amber-600">Naskah</span>
+        </div>
+    </div>
+
+    <!-- Card Proses Editing -->
+    <div class="relative bg-white rounded-2xl border border-slate-100 p-6 shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] hover:shadow-md transition-all duration-300 flex flex-col justify-between min-h-[140px]">
+        <div class="flex justify-between items-start">
+            <div class="space-y-1">
+                <span class="text-xs font-semibold text-sky-600 tracking-wider uppercase">Proses Editing</span>
+                <p class="text-xs text-slate-400 leading-snug">Penyuntingan draf</p>
+            </div>
+            <div class="text-sky-500 flex items-center justify-center">
+                <i class="bi bi-pencil-square text-xl"></i>
+            </div>
+        </div>
+        <div class="mt-4 flex items-baseline gap-1.5">
+            <span class="text-3xl font-bold text-sky-600 tracking-tight">{{ $editing ?? 0 }}</span>
+            <span class="text-[11px] font-medium text-sky-600">Naskah</span>
+        </div>
+    </div>
+
+    <!-- Card Diterima -->
+    <div class="relative bg-white rounded-2xl border border-slate-100 p-6 shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] hover:shadow-md transition-all duration-300 flex flex-col justify-between min-h-[140px]">
+        <div class="flex justify-between items-start">
+            <div class="space-y-1">
+                <span class="text-xs font-semibold text-emerald-600 tracking-wider uppercase">Diterima</span>
+                <p class="text-xs text-slate-400 leading-snug">Siap dipublikasikan</p>
+            </div>
+            <div class="text-emerald-500 flex items-center justify-center">
+                <i class="bi bi-check-circle text-xl"></i>
+            </div>
+        </div>
+        <div class="mt-4 flex items-baseline gap-1.5">
+            <span class="text-3xl font-bold text-emerald-600 tracking-tight">{{ $published ?? 0 }}</span>
+            <span class="text-[11px] font-medium text-emerald-400">Naskah</span>
+        </div>
+    </div>
 </div>
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">

@@ -7,28 +7,63 @@
 <div class="grid grid-cols-1 lg:grid-cols-[1.4fr_0.8fr] gap-8">
     <div class="space-y-8">
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
-            <x-card class="border-l-4 border-l-teal-500">
-                <div class="text-teal-700 text-sm font-medium tracking-wide">Menunggu Edit</div>
-                <div class="text-4xl font-bold text-slate-900 mt-3 tracking-tight">{{ $waitingCount }}</div>
-                <p class="text-xs text-slate-500 mt-2">Naskah disetujui yang perlu dirapikan.</p>
-            </x-card>
-            <x-card class="border-l-4 border-l-sky-500">
-                <div class="text-sky-700 text-sm font-medium tracking-wide">Sedang Disunting</div>
-                <div class="text-4xl font-bold text-slate-900 mt-3 tracking-tight">{{ $editingCount }}</div>
-                <p class="text-xs text-slate-500 mt-2">Naskah sedang diperbaiki bahasa dan formatnya.</p>
-            </x-card>
-            <x-card class="border-l-4 border-l-emerald-500">
-                <div class="text-emerald-700 text-sm font-medium tracking-wide">Selesai Disunting</div>
-                <div class="text-4xl font-bold text-slate-900 mt-3 tracking-tight">{{ $completedCount }}</div>
-                <p class="text-xs text-slate-500 mt-2">File hasil edit sudah dikirim untuk admin/author.</p>
-            </x-card>
+            <!-- Card Menunggu Edit -->
+            <div class="relative bg-white rounded-2xl border border-slate-100 p-6 shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] hover:shadow-md transition-all duration-300 flex flex-col justify-between min-h-[140px]">
+                <div class="flex justify-between items-start">
+                    <div class="space-y-1">
+                        <span class="text-xs font-semibold text-teal-600 tracking-wider uppercase">Menunggu Edit</span>
+                        <p class="text-xs text-slate-400 leading-snug">Antrean sunting baru</p>
+                    </div>
+                    <div class="text-teal-500 flex items-center justify-center">
+                        <i class="bi bi-journal-text text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-baseline gap-1.5">
+                    <span class="text-3xl font-bold text-teal-600 tracking-tight">{{ $waitingCount }}</span>
+                    <span class="text-[11px] font-medium text-teal-500">Naskah</span>
+                </div>
+            </div>
+
+            <!-- Card Sedang Disunting -->
+            <div class="relative bg-white rounded-2xl border border-slate-100 p-6 shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] hover:shadow-md transition-all duration-300 flex flex-col justify-between min-h-[140px]">
+                <div class="flex justify-between items-start">
+                    <div class="space-y-1">
+                        <span class="text-xs font-semibold text-sky-600 tracking-wider uppercase">Sedang Disunting</span>
+                        <p class="text-xs text-slate-400 leading-snug">Dalam proses editing</p>
+                    </div>
+                    <div class="text-sky-500 flex items-center justify-center">
+                        <i class="bi bi-pencil-square text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-baseline gap-1.5">
+                    <span class="text-3xl font-bold text-sky-600 tracking-tight">{{ $editingCount }}</span>
+                    <span class="text-[11px] font-medium text-sky-500">Naskah</span>
+                </div>
+            </div>
+
+            <!-- Card Selesai Disunting -->
+            <div class="relative bg-white rounded-2xl border border-slate-100 p-6 shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] hover:shadow-md transition-all duration-300 flex flex-col justify-between min-h-[140px]">
+                <div class="flex justify-between items-start">
+                    <div class="space-y-1">
+                        <span class="text-xs font-semibold text-emerald-600 tracking-wider uppercase">Selesai Disunting</span>
+                        <p class="text-xs text-slate-400 leading-snug">Sudah difinalisasi</p>
+                    </div>
+                    <div class="text-emerald-500 flex items-center justify-center">
+                        <i class="bi bi-check-circle text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-baseline gap-1.5">
+                    <span class="text-3xl font-bold text-emerald-600 tracking-tight">{{ $completedCount }}</span>
+                    <span class="text-[11px] font-medium text-emerald-500">Naskah</span>
+                </div>
+            </div>
         </div>
 
         <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
             <div class="px-6 py-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-slate-50/50">
                 <div>
                     <h3 class="text-base font-semibold text-slate-800">Antrean Penyuntingan</h3>
-                    <p class="text-sm text-slate-500 mt-1">Naskah yang sudah disetujui dan perlu dirapikan sebelum dikirim ke author.</p>
+                    <p class="text-sm text-slate-500 mt-1">Daftar naskah dalam proses penyuntingan.</p>
                 </div>
                 <a href="/editor/naskah" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg text-white bg-teal-700 hover:bg-teal-800 transition-colors active:scale-[0.98]">
                     Kelola Edit

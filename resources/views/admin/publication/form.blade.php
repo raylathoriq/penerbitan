@@ -7,7 +7,7 @@
     <x-card>
         <x-slot name="header">
             <h3 class="text-lg font-semibold text-slate-900">Form Publikasi</h3>
-            <p class="text-sm text-slate-500 mt-1">Masukkan ISBN dan file final untuk ditampilkan di Katalog Publik.</p>
+            <p class="text-sm text-slate-500 mt-1">Masukkan ISBN dan rincian berkas naskah final untuk menyelesaikan proses penerbitan.</p>
         </x-slot>
         <form action="#" method="POST" onsubmit="event.preventDefault(); window.location.href='/admin/naskah';">
             <div class="space-y-6">

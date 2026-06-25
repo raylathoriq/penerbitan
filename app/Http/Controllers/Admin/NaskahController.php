@@ -16,11 +16,12 @@ class NaskahController extends Controller
     {
         $total = Naskah::count();
         $inReview = Naskah::where('status', 'dalam review')->count();
+        $editing = Naskah::whereIn('status', ['perlu_edit', 'editing'])->count();
         $published = Naskah::where('status', 'diterima')->count();
         $rejected = Naskah::where('status', 'ditolak')->count();
         $recent = Naskah::with('user')->orderByDesc('submitted_at')->limit(5)->get();
 
-        return view('admin.dashboard', compact('total', 'inReview', 'published', 'rejected', 'recent'));
+        return view('admin.dashboard', compact('total', 'inReview', 'editing', 'published', 'rejected', 'recent'));
     }
 
     /**
@@ -63,7 +64,7 @@ class NaskahController extends Controller
     public function update(Request $request, int $id)
     {
         $request->validate([
-            'status' => 'required|string|in:diajukan,dalam review,revisi,diterima,ditolak,pengajuan_isbn,perlu_edit,editing,selesai',
+            'status' => 'required|string|in:diajukan,dalam review,revisi,diterima,ditolak,pengajuan_isbn,perlu_edit,editing,selesai,dibatalkan',
             'note' => 'nullable|string',
         ]);
 

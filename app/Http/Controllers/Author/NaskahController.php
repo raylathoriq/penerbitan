@@ -99,18 +99,24 @@ class NaskahController extends Controller
     {
         $userId = Auth::id();
         $total = Naskah::where('author_id', $userId)->count();
+        $rejected = Naskah::where('author_id', $userId)
+            ->where('status', 'ditolak')
+            ->count();
         $inReview = Naskah::where('author_id', $userId)
             ->whereIn('status', ['dalam review', 'revisi'])
             ->count();
-        $published = Naskah::where('author_id', $userId)
-            ->where('status', 'diterima')
+        $editing = Naskah::where('author_id', $userId)
+            ->whereIn('status', ['perlu_edit', 'editing'])
+            ->count();
+        $completed = Naskah::where('author_id', $userId)
+            ->whereIn('status', ['diterima', 'selesai', 'pengajuan_isbn'])
             ->count();
         $recent = Naskah::where('author_id', $userId)
             ->orderByDesc('submitted_at')
             ->limit(5)
             ->get();
 
-        return view('author.dashboard', compact('total', 'inReview', 'published', 'recent'));
+        return view('author.dashboard', compact('total', 'rejected', 'inReview', 'editing', 'completed', 'recent'));
     }
 
     /**
@@ -221,5 +227,23 @@ class NaskahController extends Controller
 
         return redirect()->route('author.naskah.show', $naskah->id)
             ->with('success', 'Balasan konfirmasi berhasil dikirim ke editor.');
+    }
+
+    /**
+     * Cancel the manuscript submission.
+     */
+    public function cancel(int $id)
+    {
+        $naskah = Naskah::where('author_id', Auth::id())->findOrFail($id);
+
+        if (!in_array($naskah->status, ['diajukan', 'dalam review', 'revisi', 'perlu_edit', 'editing'])) {
+            return redirect()->back()->with('error', 'Naskah tidak dapat dibatalkan pada status saat ini.');
+        }
+
+        $naskah->status = 'dibatalkan';
+        $naskah->save();
+
+        return redirect()->route('author.naskah.index')
+            ->with('success', 'Pengajuan naskah berhasil dibatalkan.');
     }
 }

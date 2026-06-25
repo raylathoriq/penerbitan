@@ -67,8 +67,8 @@
 
     {{-- Form Review --}}
     <div class="xl:col-span-2">
-        <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-6">
-            @if($review && $review->reviewed_at)
+            <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-6">
+                @if($review && $review->reviewed_at)
                 <h3 class="text-lg font-semibold text-emerald-800 mb-1 flex items-center">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -123,36 +123,47 @@
                 </div>
             @else
                 <h3 class="text-lg font-semibold text-slate-900 mb-1">Form Pengisian Review</h3>
-                <p class="text-sm text-slate-500 mb-6">Silakan berikan penilaian objektif Anda terhadap naskah ini. Hasil review akan diteruskan ke tim redaksi untuk ditindaklanjuti ke penulis.</p>
+                <p class="text-sm text-slate-500 mb-6">Berikan hasil penilaian objektif Anda terhadap naskah.</p>
 
-                <form action="{{ route('reviewer.naskah.submitReview', $naskah->id) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+                @if($errors->any())
+                    <div class="mb-6 p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-sm">
+                        <p class="font-bold mb-1">Gagal mengirim hasil review:</p>
+                        <ul class="list-disc pl-5 space-y-1">
+                            @foreach($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                <form action="{{ route('reviewer.naskah.submitReview', $naskah->id) }}" method="POST" enctype="multipart/form-data" class="space-y-6" x-data="{ status: '', reviewerFileName: '' }">
                     @csrf
                     <!-- Status Rekomendasi (Sesuai kolom `status` di tabel `reviews`) -->
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Rekomendasi Reviewer <span class="text-rose-500">*</span></label>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Rekomendasi Reviewer</label>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                             <label class="relative flex cursor-pointer rounded-lg border border-slate-200 bg-white p-4 shadow-sm focus:outline-none hover:bg-slate-50">
-                                <input type="radio" name="status" value="diterima" class="peer sr-only" required>
+                                <input type="radio" name="status" value="diterima" x-model="status" class="peer sr-only">
                                 <span class="peer-checked:border-emerald-500 peer-checked:ring-1 peer-checked:ring-emerald-500 absolute inset-0 rounded-lg border-2 border-transparent pointer-events-none" aria-hidden="true"></span>
                                 <div class="flex flex-col text-sm text-center w-full">
                                     <span class="font-semibold text-slate-900">Diterima</span>
-                                    <span class="text-slate-500 mt-1">Layak cetak / publikasi.</span>
+                                    <span class="text-slate-500 mt-1">Layak publikasi.</span>
                                 </div>
                             </label>
                             <label class="relative flex cursor-pointer rounded-lg border border-slate-200 bg-white p-4 shadow-sm focus:outline-none hover:bg-slate-50">
-                                <input type="radio" name="status" value="revisi" class="peer sr-only" required>
+                                <input type="radio" name="status" value="revisi" x-model="status" class="peer sr-only">
                                 <span class="peer-checked:border-amber-500 peer-checked:ring-1 peer-checked:ring-amber-500 absolute inset-0 rounded-lg border-2 border-transparent pointer-events-none" aria-hidden="true"></span>
                                 <div class="flex flex-col text-sm text-center w-full">
                                     <span class="font-semibold text-slate-900">Revisi</span>
-                                    <span class="text-slate-500 mt-1">Perlu perbaikan penulis.</span>
+                                    <span class="text-slate-500 mt-1">Butuh perbaikan.</span>
                                 </div>
                             </label>
                             <label class="relative flex cursor-pointer rounded-lg border border-slate-200 bg-white p-4 shadow-sm focus:outline-none hover:bg-slate-50">
-                                <input type="radio" name="status" value="ditolak" class="peer sr-only" required>
+                                <input type="radio" name="status" value="ditolak" x-model="status" class="peer sr-only">
                                 <span class="peer-checked:border-rose-500 peer-checked:ring-1 peer-checked:ring-rose-500 absolute inset-0 rounded-lg border-2 border-transparent pointer-events-none" aria-hidden="true"></span>
                                 <div class="flex flex-col text-sm text-center w-full">
                                     <span class="font-semibold text-slate-900">Ditolak</span>
-                                    <span class="text-slate-500 mt-1">Tidak sesuai standar.</span>
+                                    <span class="text-slate-500 mt-1">Tidak layak publikasi.</span>
                                 </div>
                             </label>
                         </div>
@@ -160,14 +171,14 @@
 
                     <!-- Reviewer Notes (Sesuai kolom `reviewer_notes` di tabel `reviews`) -->
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Catatan Hasil Review (Reviewer Notes) <span class="text-rose-500">*</span></label>
-                        <p class="text-xs text-slate-500 mb-3">Tuliskan analisis, kritik, saran, atau bagian yang perlu direvisi secara mendetail.</p>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Catatan Evaluasi</label>
+                        <p class="text-xs text-slate-500 mb-3">Tuliskan rincian hasil evaluasi secara mendetail.</p>
                         <textarea name="reviewer_notes" rows="8" required class="block w-full border border-slate-200 rounded-lg text-sm p-3 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" placeholder="1. Bagian metodologi pada bab 3 kurang relevan...&#10;2. Kutipan daftar pustaka terlalu lawas..."></textarea>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-slate-700 mb-1">Upload Naskah Hasil Coretan (Opsional)</label>
-                        <p class="text-xs text-slate-500 mb-2">Jika Anda memiliki file hasil koreksi (coretan/komentar) PDF/Word.</p>
+                        <p class="text-xs text-slate-500 mb-2">Unggah file naskah coretan hasil koreksi (PDF/Word).</p>
                         <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-300 border-dashed rounded-lg hover:bg-slate-50 transition-colors">
                             <div class="space-y-1 text-center">
                                 <svg class="mx-auto h-12 w-12 text-slate-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
@@ -175,8 +186,8 @@
                                 </svg>
                                 <div class="flex text-sm text-slate-600 justify-center">
                                     <label for="file-upload" class="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
-                                        <span>Upload file PDF/Word</span>
-                                        <input id="file-upload" name="file-upload" type="file" class="sr-only" accept=".pdf,.doc,.docx">
+                                        <span x-text="reviewerFileName ? 'Ganti file: ' + reviewerFileName : 'Upload file PDF/Word'">Upload file PDF/Word</span>
+                                        <input id="file-upload" name="file-upload" type="file" class="sr-only" accept=".pdf,.doc,.docx" @change="reviewerFileName = $event.target.files[0]?.name || ''">
                                     </label>
                                 </div>
                                 <p class="text-xs text-slate-500">Maks. ukuran 10MB</p>
@@ -185,7 +196,7 @@
                     </div>
 
                     <div class="pt-4 border-t border-slate-100 flex justify-end">
-                        <button type="submit" class="inline-flex items-center px-6 py-2.5 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
+                        <button type="submit" @click="if(!status) { $event.preventDefault(); alert('Harap pilih rekomendasi reviewer terlebih dahulu.'); }" class="inline-flex items-center px-6 py-2.5 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
                             Kirim Hasil Review
                         </button>
                     </div>

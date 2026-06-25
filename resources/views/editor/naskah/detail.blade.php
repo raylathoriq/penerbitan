@@ -33,21 +33,25 @@
                     <p class="text-sm text-slate-700 mt-1 leading-relaxed">{{ $naskah->description ?? 'Tidak ada deskripsi yang tersedia.' }}</p>
                 </div>
                 <div class="pt-4 border-t border-slate-100">
-                    <h4 class="text-slate-500 text-xs font-medium mb-3">Dokumen Penulis Terbaru</h4>
-                    @php $authorFile = $naskah->latestAuthorFile(); @endphp
-                    @if($authorFile)
-                        <a href="{{ asset('storage/' . $authorFile->file_path) }}" target="_blank" class="inline-flex items-center w-full justify-between p-3 border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-colors group">
-                            <div class="flex items-center min-w-0">
-                                <svg class="w-5 h-5 text-teal-600 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
-                                <span class="text-sm font-medium text-slate-900 truncate">{{ $authorFile->file_name }}</span>
-                            </div>
-                            <span class="text-xs text-slate-500">
-                                @if($authorFile->file_size)
-                                    {{ round($authorFile->file_size / 1024, 1) }} KB
-                                @endif
-                                ({{ $authorFile->jenis_file === 'revisi' ? 'Revisi v' . $authorFile->version : 'Orisinil' }})
-                            </span>
-                        </a>
+                    <h4 class="text-slate-500 text-xs font-semibold mb-3">Dokumen dari Penulis (Riwayat Revisi)</h4>
+                    @php $authorFiles = $naskah->files()->whereIn('jenis_file', ['original', 'revisi'])->orderByDesc('version')->get(); @endphp
+                    @if($authorFiles->isNotEmpty())
+                        <div class="space-y-2">
+                            @foreach($authorFiles as $file)
+                                <a href="{{ asset('storage/' . $file->file_path) }}" target="_blank" class="inline-flex items-center w-full justify-between p-3 border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-colors group">
+                                    <div class="flex items-center min-w-0">
+                                        <svg class="w-5 h-5 text-teal-600 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                                        <span class="text-sm font-medium text-slate-900 truncate">{{ $file->file_name }}</span>
+                                    </div>
+                                    <span class="text-xs text-slate-500 flex-shrink-0 ml-2">
+                                        @if($file->file_size)
+                                            {{ round($file->file_size / 1024, 1) }} KB
+                                        @endif
+                                        ({{ $file->jenis_file === 'revisi' ? 'Revisi v' . $file->version : 'Orisinil v1' }})
+                                    </span>
+                                </a>
+                            @endforeach
+                        </div>
                     @else
                         <p class="text-sm text-slate-500">Berkas belum diunggah.</p>
                     @endif
@@ -157,6 +161,30 @@
                                 <span>{{ $log->tanggal_edit->copy()->setTimezone('Asia/Jakarta')->locale('id')->translatedFormat('d M Y H:i') }} WIB</span>
                             </div>
                             <p class="text-sm text-slate-600 mt-1 leading-relaxed">{{ $log->comments }}</p>
+                            @php
+                                $logFile = null;
+                                if ($log->decision === 'editing' && str_starts_with($log->comments, 'Balasan Author:')) {
+                                    $logFile = $naskah->files()
+                                        ->where('jenis_file', 'revisi')
+                                        ->whereBetween('created_at', [
+                                            $log->created_at->copy()->subSeconds(5),
+                                            $log->created_at->copy()->addSeconds(5)
+                                        ])
+                                        ->first();
+                                }
+                            @endphp
+                            @if($logFile)
+                                <div class="mt-3 bg-white border border-slate-200 rounded-lg p-2.5 flex items-center justify-between shadow-sm">
+                                    <div class="flex items-center min-w-0">
+                                        <svg class="w-4 h-4 text-emerald-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                                        <span class="text-xs font-semibold text-slate-700 truncate" title="{{ $logFile->file_name }}">{{ $logFile->file_name }}</span>
+                                    </div>
+                                    <a href="{{ asset('storage/' . $logFile->file_path) }}" target="_blank" class="text-xs font-bold text-emerald-700 hover:text-emerald-800 transition-colors ml-4 flex-shrink-0 inline-flex items-center">
+                                        Unduh Berkas
+                                        <svg class="w-3.5 h-3.5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                                    </a>
+                                </div>
+                            @endif
                             <div class="mt-2 text-xs">
                                 <span class="text-slate-400">Keputusan: </span>
                                 <span class="font-semibold text-teal-700">
@@ -177,7 +205,7 @@
 
     <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-6">
         <h3 class="text-lg font-semibold text-slate-900 mb-1">Form Hasil Penyuntingan</h3>
-        <p class="text-sm text-slate-500 mb-6">Unggah naskah yang sudah dibenarkan dan kirimkan catatan hasil edit kepada author.</p>
+        <p class="text-sm text-slate-500 mb-6">Unggah naskah hasil suntingan dan kirim catatan ke penulis.</p>
 
         @if ($errors->any())
             <div class="mb-5 p-4 bg-rose-50 border border-rose-200 rounded-lg text-sm text-rose-600">
@@ -192,14 +220,14 @@
         <form action="{{ route('editor.naskah.submitEdit', $naskah->id) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
             <div>
-                <label class="block text-sm font-medium text-slate-700 mb-2">Status Penyuntingan <span class="text-rose-500">*</span></label>
+                <label class="block text-sm font-medium text-slate-700 mb-2">Status Penyuntingan</label>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                     <label class="relative flex cursor-pointer rounded-lg border border-slate-200 bg-white p-4 shadow-sm focus:outline-none hover:bg-slate-50">
                         <input type="radio" name="editing_status" value="draft" x-model="editingStatus" class="peer sr-only">
                         <span class="peer-checked:border-sky-500 peer-checked:ring-1 peer-checked:ring-sky-500 absolute inset-0 rounded-lg border-2 border-transparent pointer-events-none" aria-hidden="true"></span>
                         <div class="flex flex-col text-sm text-center w-full">
                             <span class="font-semibold text-slate-900">Simpan Draft</span>
-                            <span class="text-slate-500 mt-1">Edit belum final.</span>
+                            <span class="text-slate-500 mt-1">Simpan draf sementara.</span>
                         </div>
                     </label>
                     <label class="relative flex cursor-pointer rounded-lg border border-slate-200 bg-white p-4 shadow-sm focus:outline-none hover:bg-slate-50">
@@ -207,7 +235,7 @@
                         <span class="peer-checked:border-amber-500 peer-checked:ring-1 peer-checked:ring-amber-500 absolute inset-0 rounded-lg border-2 border-transparent pointer-events-none" aria-hidden="true"></span>
                         <div class="flex flex-col text-sm text-center w-full">
                             <span class="font-semibold text-slate-900">Perlu Cek Author</span>
-                            <span class="text-slate-500 mt-1">Ada bagian perlu konfirmasi.</span>
+                            <span class="text-slate-500 mt-1">Butuh klarifikasi penulis.</span>
                         </div>
                     </label>
                     <label class="relative flex cursor-pointer rounded-lg border border-slate-200 bg-white p-4 shadow-sm focus:outline-none hover:bg-slate-50">
@@ -215,7 +243,7 @@
                         <span class="peer-checked:border-emerald-500 peer-checked:ring-1 peer-checked:ring-emerald-500 absolute inset-0 rounded-lg border-2 border-transparent pointer-events-none" aria-hidden="true"></span>
                         <div class="flex flex-col text-sm text-center w-full">
                             <span class="font-semibold text-slate-900">Siap Dikirim</span>
-                            <span class="text-slate-500 mt-1">File sudah dibenarkan.</span>
+                            <span class="text-slate-500 mt-1">Selesai / Final.</span>
                         </div>
                     </label>
                 </div>
@@ -223,7 +251,7 @@
 
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">Upload Naskah Hasil Edit</label>
-                <p class="text-xs text-slate-500 mb-2">Unggah file naskah yang sudah dirapikan oleh editor dalam format PDF, DOC, atau DOCX. (Maks. 10MB)</p>
+                <p class="text-xs text-slate-500 mb-2">Format berkas: PDF, DOC, DOCX (Maks. 10MB)</p>
                 <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-300 border-dashed rounded-lg hover:bg-slate-50 transition-colors">
                     <div class="space-y-1 text-center">
                         <svg class="mx-auto h-12 w-12 text-slate-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
@@ -242,7 +270,7 @@
 
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">Upload Cover Naskah (Opsional)</label>
-                <p class="text-xs text-slate-500 mb-2">Unggah gambar sampul naskah dalam format JPEG, JPG, atau PNG. (Maks. 5MB)</p>
+                <p class="text-xs text-slate-500 mb-2">Format berkas: JPEG, JPG, PNG (Maks. 5MB)</p>
                 <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-300 border-dashed rounded-lg hover:bg-slate-50 transition-colors">
                     <div class="space-y-1 text-center">
                         <svg class="mx-auto h-12 w-12 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -260,8 +288,8 @@
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1">Catatan Hasil Edit <span class="text-rose-500">*</span></label>
-                <p class="text-xs text-slate-500 mb-3">Jelaskan perbaikan tata bahasa/format yang telah dilakukan atau konfirmasi revisi yang diperlukan.</p>
+                <label class="block text-sm font-medium text-slate-700 mb-1">Catatan Hasil Edit</label>
+                <p class="text-xs text-slate-500 mb-3">Tuliskan poin-poin penyuntingan yang telah diselesaikan.</p>
                 <textarea name="editor_notes" rows="6" required class="block w-full border border-slate-200 rounded-lg text-sm p-3 focus:ring-teal-600 focus:border-teal-600 shadow-sm" placeholder="Contoh:&#10;1. Mengoreksi kesalahan pengetikan (typo) di bab 1 dan 2.&#10;2. Menyelaraskan format penulisan tabel.&#10;3. Menambahkan daftar isi dan daftar pustaka."></textarea>
             </div>
 
